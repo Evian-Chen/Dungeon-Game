@@ -1,0 +1,6 @@
+﻿  Role.cpp
+  Shop.cpp
+  main.cpp
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\main.cpp(23,15): warning C4244: '引數': 將 'time_t' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+  正在產生程式碼...
+  Dougeon.vcxproj -> C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\x64\Debug\Dougeon.exe
