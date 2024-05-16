@@ -86,13 +86,6 @@ public:
 
 	// move role
 	void move(const Position& delta);
-
-	// undefine!!! from Entity update
-	// update position
-	// check if role has any to do
-	// void update();
-
-	void updatePack(string item);
 	
 	void showBag();
 	void chooseEquip();
@@ -101,6 +94,6 @@ public:
 	void showStatus();
 
 	void showShop();
-	void showChoosenItem(int, int);
-	void butItem();
+	void showChoosenItem(int, int, vector<string>&);
+	bool buyItem(int, vector<string>&);
 };

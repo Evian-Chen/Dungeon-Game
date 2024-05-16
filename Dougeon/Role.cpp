@@ -5,6 +5,7 @@
 #include <Windows.h>
 #include <conio.h>
 #include <iomanip>
+#include <vector>
 // #include "Enemy.h"
 // #include "allConstants.h"
 
@@ -110,6 +111,8 @@ void Role::move(const Position& delta) {
 
 void Role::showShop()
 {
+	vector<string> bought;
+
 	size_t maxWidth = 0;
 	for (const auto& pair : itemsName) {
 		maxWidth = max(maxWidth, pair.first.size());
@@ -117,35 +120,42 @@ void Role::showShop()
 	maxWidth *= 2;
 
 	int numOfEquip = 0;
-	showChoosenItem(numOfEquip, maxWidth);
+	bool canBuy = false;
+	showChoosenItem(numOfEquip, maxWidth, bought);
 
 	while (true) {
 		// Check if the up arrow key is pressed
 		if (GetAsyncKeyState(VK_DOWN) && numOfEquip + 1 < itemsName.size()) {
 			numOfEquip++;
-			showChoosenItem(numOfEquip, maxWidth);
+			showChoosenItem(numOfEquip, maxWidth, bought);
 		}
 		else if (GetAsyncKeyState(VK_UP) && numOfEquip - 1 >= 0) {
 			numOfEquip--;
-			showChoosenItem(numOfEquip, maxWidth);
+			showChoosenItem(numOfEquip, maxWidth, bought);
+		}
+		else if (GetAsyncKeyState(VK_SPACE)) {
+			canBuy = buyItem(numOfEquip, bought);
+			showChoosenItem(numOfEquip, maxWidth, bought);
+			if (!canBuy) { cout << "You don't have enough money\n"; }
 		}
 		else if (GetAsyncKeyState(0x45)) {
 			break;
 		}
 
-		// Add a delay to prevent high CPU usage
-		Sleep(100);
+		// prevent high CPU usage
+		system("pause");
+		// Sleep(100);
 	}
 }
 
-void Role::showChoosenItem(int num, int maxWidth)
+void Role::showChoosenItem(int num, int maxWidth, vector<string>& bought)
 {
 	system("cls");  // clear console
 
 	cout << "\n======== Your wallet. ========\n" << endl;
 	cout << "money: " << money << endl << endl;
 
-	cout << "/** Click enter to buy items.               **/" << endl;
+	cout << "/** Click space to buy items.               **/" << endl;
 	cout << "/** Use up and down arrows to choose items. **/\n" << endl;
 	cout << "\n======== Items in sold. ========\n" << endl;
 	cout << "Item" << setw(maxWidth - 4) << "Price" << endl;
@@ -175,19 +185,43 @@ void Role::showChoosenItem(int num, int maxWidth)
 	colorSettings = FOREGROUND_INTENSITY;
 	SetConsoleTextAttribute(hConsole, colorSettings);
 
+	cout << "\n======== Bought items: ========\n";
+	if (bought.size() != 0)
+	{
+		for (string str : bought)
+		{
+			cout << str << endl;
+		}
+	}
+	else
+	{
+		cout << "You haven't bought anything.\n";
+	}
+
 	cout << "\n/** Click E to exit. **/\n" << endl;
 
 }
 
-void Role::butItem()
+bool Role::buyItem(int numOfEquip, vector<string>& bought)
 {
-	showBag();
-}
+	string item = itemsName[numOfEquip].first;
 
-void Role::updatePack(string item)
-{
-	equip.push_back(item);
-	avalEquip[item] = true;
+	// money is enough and the hasn't bouhgt the item yet
+	if (itemsName[numOfEquip].second <= money)
+	{
+		if (find(bought.begin(), bought.end(), item) == bought.end())
+		{
+			// add item to the bag
+			money -= itemsName[numOfEquip].second;
+			this->equip.push_back(item);
+			bought.push_back(item);
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void Role::showBag()
@@ -195,6 +229,10 @@ void Role::showBag()
 	if (equip.size() == 0)
 	{
 		cout << "There's nothing in your bag.\n";
+		cout << "Click B to exit.\n";
+
+		// wait for input
+		char ch = _getch();
 	}
 	else
 	{
@@ -207,26 +245,27 @@ void Role::chooseEquip()
 	int numOfEquip = 0;
 	showChoosen(numOfEquip);
 
-	while (true) {
-		// Check if the up arrow key is pressed
-		if (GetAsyncKeyState(VK_DOWN) && numOfEquip + 1 < equip.size()) {
+	char input = _getch();
+
+	while (input != 'b') {
+		if (input == 80 && numOfEquip + 1 < equip.size()) { // Check if the up arrow key is pressed
 			numOfEquip++;
 			showChoosen(numOfEquip);
 		}
-		else if (GetAsyncKeyState(VK_UP) && numOfEquip - 1 >= 0) {
+		else if (input == 72 && numOfEquip - 1 >= 0) {
 			numOfEquip--;
 			showChoosen(numOfEquip);
 		}
-		else if (GetAsyncKeyState(VK_RETURN)) {
+		else if (input == '\n' || input == '\r') { // enter to activate the equipment
 			avalEquip[equip[numOfEquip]] = !avalEquip[equip[numOfEquip]];
 			showChoosen(numOfEquip);
 		}
-		else if (GetAsyncKeyState(0x45)) {
-			break;
+		else
+		{
+			showChoosen(numOfEquip);
 		}
 
-		// Add a delay to prevent high CPU usage
-		Sleep(100);
+		input = _getch();
 	}
 }
 
@@ -284,7 +323,7 @@ void Role::showChoosen(int num)
 	cout << "\n======== Your wallet. ========\n" << endl;
 	cout << "money: " << money << endl;
 
-	cout << "\n/** Double click E to exit. **/\n" << endl;
+	cout << "\n/** Double click B to exit. **/\n" << endl;
 }
 
 void Role::showStatus()

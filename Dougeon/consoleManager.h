@@ -21,7 +21,7 @@ enum ValidInput
     EESC = 5,
 
     // open backpack
-    EE = 6,
+    EB = 6,
 
     // check role status
     EQ = 7,
@@ -130,8 +130,8 @@ void keyUpdate(bool key[])
     case 'd':
         key[ValidInput::ED] = true;
         break;
-    case 'e':
-        key[ValidInput::EE] = true;
+    case 'b':
+        key[ValidInput::EB] = true;
         break;
     case 'q':
         key[ValidInput::EQ] = true;
@@ -143,7 +143,6 @@ void keyUpdate(bool key[])
         break;
     }
 }
-
 
 
 /*
@@ -174,11 +173,7 @@ void update(bool key[], Role& player)
         delta = delta + Position(1, 0);
         hasInput = true;
     }
-    else if (key[ValidInput::EE]) {
-        // the bag is already open, back to map
-        if (openBag) {
-            printMap(player.getPosition().x, player.getPosition().y, 10);
-        }
+    else if (key[ValidInput::EB]) {
         openBag = !openBag;
     }
     else if (key[ValidInput::EQ]) {
@@ -197,7 +192,14 @@ void update(bool key[], Role& player)
             }
         }
         if (allInvalid)
-            std::cout << "invalid input\n";
+            printMap(player.getPosition().x, player.getPosition().y, 10);
+            
+            // use red color
+            WORD colorSettings = FOREGROUND_RED;
+            SetConsoleTextAttribute(hConsole, colorSettings);
+            std::cout << "\nInvalid input!!\n";
+            colorSettings = FOREGROUND_INTENSITY;
+            SetConsoleTextAttribute(hConsole, colorSettings);
     }
 
     // do something according to the input
@@ -207,6 +209,8 @@ void update(bool key[], Role& player)
     }
     else if (openBag) {
         player.showBag();
+        printMap(player.getPosition().x, player.getPosition().y, 10);
+        openBag = !openBag;
     }
     else if (showStatus) {
         player.showStatus();

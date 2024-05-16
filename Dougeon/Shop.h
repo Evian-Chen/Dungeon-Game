@@ -12,7 +12,7 @@ public:
 
     // vector that store all product sold in the shop
     // item name: price
-    // vector<string> itemsName = { "woodenSword", "hammer", "giantHammer", "woodenShield", "plateArmor", "robe", "holyGrail","shoes", "godsbeard", "teleportScroll" };
+    // itemvector<string> itemsName = { "woodenSword", "hammer", "giantHammer", "woodenShield", "plateArmor", "robe", "holyGrail","shoes", "godsbeard", "teleportScroll" };
     
     
     vector<pair<string, int>> itemsName= { { "woodenSword", 10 },
