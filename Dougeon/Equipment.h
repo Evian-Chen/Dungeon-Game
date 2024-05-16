@@ -8,8 +8,8 @@ class Equipment
 public:
 	
 	// when role buy these in shop, turn them to true
-
-	map<string, int> items = { { "woodenSword", 10 },
+	/*
+		map<string, int> items = { { "woodenSword", 10 },
 							   { "hammer", 15 },
 							   { "giantHammer", 20 },
 							   { "woodenShield", 12 },
@@ -19,6 +19,8 @@ public:
 							   { "shoes", 5 },
 							   { "godsbeard", 30 },
 							   { "teleportScroll", 1 } };
+	*/
+
 
 	// weapons
 	// once the role has the equipment, set their skill status to true

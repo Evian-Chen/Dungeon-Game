@@ -1,13 +1,17 @@
 #include "Shop.h"
 
+/*
 void Shop::listAllItem()
 {
-	for (auto& item : items)
+	for (string& str : itemsName)
 	{
-		std::cout << item.first << '\t' << item.second << '\n';
+		std::cout << str << '\n';
 	}
 }
 
+*/
+
+/*
 void Shop::buyItem(Role& role, string item)
 {
 	int avalibleMoney = role.money;
@@ -16,3 +20,4 @@ void Shop::buyItem(Role& role, string item)
 		role.updatePack(item);
 	}
 }
+*/

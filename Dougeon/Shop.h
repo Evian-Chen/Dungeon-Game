@@ -1,19 +1,21 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <map>
-#include "Role.h"
+#include <vector>
 using namespace std;
 
 class Shop
 {
 public:
-    void listAllItem();
-    void buyItem(Role& role, string item);
+    
+    // void buyItem(Role& role, string item);
 
     // vector that store all product sold in the shop
     // item name: price
-    map<string, int> items = { { "woodenSword", 10 },
+    // vector<string> itemsName = { "woodenSword", "hammer", "giantHammer", "woodenShield", "plateArmor", "robe", "holyGrail","shoes", "godsbeard", "teleportScroll" };
+    
+    
+    vector<pair<string, int>> itemsName= { { "woodenSword", 10 },
                                { "hammer", 15 },
                                { "giantHammer", 20 },
                                { "woodenShield", 12 },
@@ -23,4 +25,9 @@ public:
                                { "shoes", 5 },
                                { "godsbeard", 30 },
                                { "teleportScroll", 1 } };
+
+    
+        
+    
+    // void listAllItem();
 };

@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.h"
 #include "Enemy.h"
+#include "Shop.h"
 // #include "Skill.h"
 #include "Equipment.h"
 #include "Position.h"
@@ -11,7 +12,7 @@
 
 using namespace std;
 
-class Role : public Entity, public Equipment
+class Role : public Entity, public Equipment, public Shop
 {
 private:  // define if role has the equipment to use skill
 	bool hasProvoke = false;
@@ -20,7 +21,7 @@ private:  // define if role has the equipment to use skill
 	bool hasSpeedUp = false;
 
 	// backpack, a vector of pointer, which stores all the equipments
-	vector<string> equip;
+	vector<string> equip{ "woodenSword", "hammer"};
 	map<string, bool> avalEquip = { { "woodenSword", false },
 								    { "hammer", false },
 								    { "giantHammer", false },
@@ -84,13 +85,7 @@ public:
 
 
 	// move role
-	void move(const Position& delta) {
-		Position temp = pos + delta;
-		if (temp.isPositionValid())
-		{
-			pos += delta;
-		}
-	}
+	void move(const Position& delta);
 
 	// undefine!!! from Entity update
 	// update position
@@ -100,6 +95,12 @@ public:
 	void updatePack(string item);
 	
 	void showBag();
+	void chooseEquip();
+	void showChoosen(int);
 
 	void showStatus();
+
+	void showShop();
+	void showChoosenItem(int, int);
+	void butItem();
 };

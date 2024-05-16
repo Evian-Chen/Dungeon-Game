@@ -82,7 +82,7 @@ void setUpMap()
         }
     }
 
-    gMap[10][10] = SHOP;
+    gMap[shopX][shopY] = SHOP;
     gMap[15][5] = ENEMY;
 }
 
@@ -182,7 +182,7 @@ void update(bool key[], Role& player)
         openBag = !openBag;
     }
     else if (key[ValidInput::EQ]) {
-        // the bag is already open, back to map
+        // the status list is already open, back to map
         if (showStatus) {
             printMap(player.getPosition().x, player.getPosition().y, 10);
         }

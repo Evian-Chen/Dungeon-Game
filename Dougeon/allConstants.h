@@ -10,3 +10,6 @@ const char SHOP = '$';
 const char BLOCKED = ' ';
 const char ENEMY = 'E';
 const char PLAYER_ICON = 'R';
+
+const int shopX = 39;
+const int shopY = 135;
