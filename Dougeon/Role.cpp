@@ -1,13 +1,12 @@
 #include "Role.h"
 #include "Position.h"
+#include "allConstants.h"
 #include <utility>
 #include <iostream>
 #include <Windows.h>
 #include <conio.h>
 #include <iomanip>
 #include <vector>
-// #include "Enemy.h"
-// #include "allConstants.h"
 
 using namespace std;
 
@@ -111,7 +110,7 @@ void Role::move(const Position& delta) {
 
 void Role::showShop()
 {
-	vector<string> bought;
+	map<string, int> bought;
 
 	size_t maxWidth = 0;
 	for (const auto& pair : itemsName) {
@@ -136,9 +135,16 @@ void Role::showShop()
 		else if (GetAsyncKeyState(VK_SPACE)) {
 			canBuy = buyItem(numOfEquip, bought);
 			showChoosenItem(numOfEquip, maxWidth, bought);
+
+			// use red to emphasize the player is so poor that con't but this item
+			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+			WORD colorSettings = FOREGROUND_RED;
+			SetConsoleTextAttribute(hConsole, colorSettings);
 			if (!canBuy) { cout << "You don't have enough money\n"; }
+			colorSettings = FOREGROUND_INTENSITY;
+			SetConsoleTextAttribute(hConsole, colorSettings);
 		}
-		else if (GetAsyncKeyState(0x45)) {
+		else if (GetAsyncKeyState(0x45)) { // click E to exit
 			break;
 		}
 
@@ -148,7 +154,7 @@ void Role::showShop()
 	}
 }
 
-void Role::showChoosenItem(int num, int maxWidth, vector<string>& bought)
+void Role::showChoosenItem(int num, int maxWidth, map<string, int>& bought)
 {
 	system("cls");  // clear console
 
@@ -186,35 +192,51 @@ void Role::showChoosenItem(int num, int maxWidth, vector<string>& bought)
 	SetConsoleTextAttribute(hConsole, colorSettings);
 
 	cout << "\n======== Bought items: ========\n";
+
+	cout << "Item" << setw(maxWidth - 4) << "Amount" << endl;
+
+	int total = 0;  // caculate the total spend
+
 	if (bought.size() != 0)
 	{
-		for (string str : bought)
+		for (auto& pair: bought)
 		{
-			cout << str << endl;
+			cout << pair.first << setw(maxWidth - pair.first.length());
+			cout << pair.second << endl;
+			total += pair.second * priceTag[pair.first];
 		}
+		cout << "Total spent: " << total << endl;
 	}
 	else
 	{
-		cout << "You haven't bought anything.\n";
+		cout << "You haven't bought anything.\n\n";
 	}
 
 	cout << "\n/** Click E to exit. **/\n" << endl;
 
 }
 
-bool Role::buyItem(int numOfEquip, vector<string>& bought)
+bool Role::buyItem(int numOfEquip, map<string, int>& bought)
 {
 	string item = itemsName[numOfEquip].first;
 
 	// money is enough and the hasn't bouhgt the item yet
 	if (itemsName[numOfEquip].second <= money)
 	{
-		if (find(bought.begin(), bought.end(), item) == bought.end())
+		// spend money
+		money -= itemsName[numOfEquip].second;
+
+		// add item to bag
+		if (this->equipNum.find(item) == this->equipNum.end())
 		{
-			// add item to the bag
-			money -= itemsName[numOfEquip].second;
-			this->equip.push_back(item);
-			bought.push_back(item);
+			this->equipNum[item] = 1;
+			equip.push_back(item);
+			bought[item] = 1;
+		}
+		else
+		{
+			this->equipNum[item]++;
+			bought[item]++;
 		}
 		return true;
 	}
@@ -228,7 +250,7 @@ void Role::showBag()
 {
 	if (equip.size() == 0)
 	{
-		cout << "There's nothing in your bag.\n";
+		cout << "There's nothing in your bag.\n\n";
 		cout << "Click B to exit.\n";
 
 		// wait for input
@@ -243,39 +265,78 @@ void Role::showBag()
 void Role::chooseEquip()
 {
 	int numOfEquip = 0;
-	showChoosen(numOfEquip);
+	size_t maxWidth = 0;
+	for (const string& str : equip) {
+		maxWidth = max(maxWidth, str.length());
+	}
+	maxWidth *= 2;
+
+	showChoosen(numOfEquip, maxWidth);
 
 	char input = _getch();
 
 	while (input != 'b') {
 		if (input == 80 && numOfEquip + 1 < equip.size()) { // Check if the up arrow key is pressed
 			numOfEquip++;
-			showChoosen(numOfEquip);
+			showChoosen(numOfEquip, maxWidth);
 		}
 		else if (input == 72 && numOfEquip - 1 >= 0) {
 			numOfEquip--;
-			showChoosen(numOfEquip);
+			showChoosen(numOfEquip, maxWidth);
 		}
-		else if (input == '\n' || input == '\r') { // enter to activate the equipment
-			avalEquip[equip[numOfEquip]] = !avalEquip[equip[numOfEquip]];
-			showChoosen(numOfEquip);
+		else if (input == '+' || input == 78) // click + to activate the equipment
+		{ 	
+			// this equipment is enough to use
+			if (equipNum[equip[numOfEquip]] > 0 && actiEquip < ACTEQUIPLIM)
+			{
+				// activate the equipmeant
+				avalEquip[equip[numOfEquip]] = true;
+				if (avalEquipNum.find(equip[numOfEquip]) == avalEquipNum.end()) { avalEquipNum[equip[numOfEquip]] = 1; }
+				else{ avalEquipNum[equip[numOfEquip]]++; }
+				equipNum[equip[numOfEquip]]--;
+
+				actiEquip++;
+			}
+			
+			showChoosen(numOfEquip, maxWidth);
+		}
+		else if (input == '-' || input == 74) // click - to un-activate the equipment
+		{ 
+			// the equipment can be found in avalEquipNum
+			if (avalEquipNum.find(equip[numOfEquip]) != avalEquipNum.end())
+			{
+				avalEquipNum[equip[numOfEquip]]--;
+				if (equipNum.find(equip[numOfEquip]) == equipNum.end()) { equipNum[equip[numOfEquip]] = 1; }
+				else { equipNum[equip[numOfEquip]]++; }
+
+				actiEquip--;
+
+				if (avalEquipNum[equip[numOfEquip]] == 0)
+				{
+					avalEquip[equip[numOfEquip]] = false;
+					avalEquipNum.erase(equip[numOfEquip]);
+				}
+			}
+
+			showChoosen(numOfEquip, maxWidth);
 		}
 		else
 		{
-			showChoosen(numOfEquip);
+			showChoosen(numOfEquip, maxWidth);
 		}
 
 		input = _getch();
 	}
 }
 
-void Role::showChoosen(int num)
+void Role::showChoosen(int num, int maxWidth)
 {
 	system("cls");  // clear console
 
 	cout << "/** Click enter to activate quipments.          **/" << endl;
 	cout << "/** Use up and down arrows to choose quipments. **/\n" << endl;
 	cout << "\n======== Your equipments. ========\n" << endl;
+	cout << "Equipment" << setw(maxWidth - 9) << "Amount" << endl;
 
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	WORD colorSettings = FOREGROUND_INTENSITY;
@@ -295,15 +356,18 @@ void Role::showChoosen(int num)
 		}
 
 		SetConsoleTextAttribute(hConsole, colorSettings);
-		cout << equip[i] << endl;
+		cout << equip[i] << setw(maxWidth - equip[i].length());
+		cout << equipNum[equip[i]] << endl;
+		// cout << equip[i] << endl;
 	}
 
 	colorSettings = FOREGROUND_INTENSITY;
 	SetConsoleTextAttribute(hConsole, colorSettings);
 
 	cout << "\n======== The following is choosen equipments. ========\n" << endl;
+	cout << "Equipment" << setw(maxWidth * 2 - 9) << "Amount" << endl;
 
-	for (auto& pair : avalEquip)
+	for (auto& pair : avalEquipNum)
 	{
 		if (pair.second)
 		{
@@ -316,8 +380,16 @@ void Role::showChoosen(int num)
 			colorSettings = BACKGROUND_INTENSITY;
 			colorSettings = FOREGROUND_INTENSITY;
 			SetConsoleTextAttribute(hConsole, colorSettings);
-			cout << " is active.\n";
+			cout << " is active." << setw(maxWidth * 2 - pair.first.length() - 14) << pair.second << "X\n";
 		}
+	}
+	if (actiEquip == ACTEQUIPLIM)
+	{
+		colorSettings = FOREGROUND_RED;
+		SetConsoleTextAttribute(hConsole, colorSettings);
+		cout << "Your equipments have reached the limit.\n\n";
+		colorSettings = FOREGROUND_INTENSITY;
+		SetConsoleTextAttribute(hConsole, colorSettings);
 	}
 
 	cout << "\n======== Your wallet. ========\n" << endl;

@@ -1,9 +1,14 @@
 ﻿  Role.cpp
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(124,46): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(130,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(134,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(138,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-  main.cpp
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\main.cpp(23,15): warning C4244: '引數': 將 'time_t' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
-  正在產生程式碼...
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\allConstants.h(10,27): warning C4305: '正在初始化': 從 'int' 轉換為 'char'，是由較大的類型轉換為較小的類型，可能導致資料遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\allConstants.h(10,22): warning C4309: '正在初始化': 轉換導致常數值遭截斷; 可能需要使用較大的類型
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(123,46): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(129,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(133,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(137,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(274,34): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(281,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(285,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(301,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(321,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
+C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(325,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
   Dougeon.vcxproj -> C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\x64\Debug\Dougeon.exe

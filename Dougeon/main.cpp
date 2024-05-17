@@ -32,7 +32,7 @@ int main()
 
     setUpMap();
 
-    printMap(player1.getPosition().x, player1.getPosition().y, 10);
+    printMap(player1);
 
     // Variable for game loop
     clock_t startT, endT;

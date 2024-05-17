@@ -86,29 +86,59 @@ void setUpMap()
     gMap[15][5] = ENEMY;
 }
 
-void printMap(int playerX, int playerY, int visionRange) {
+void printInfo(Role& player)
+{
+    // player info
+    cout << "\n|| ● Player-1 is at (" << player.getPosition().x << ", " << player.getPosition().y << ")";
+    cout << endl << endl;
+
+    // width = 80
+    cout << " _______________________________________________\n";
+    cout << "|||||||||||||||||||||||||||||||||||||||||||||||||\n";
+    cout << "||                                             ||\n";
+    cout << "||    Press W,S,A,D to move your character.    ||\n";
+    cout << "||          Press B to open your bag.          ||\n";
+    cout << "||        Press E to check your status.        ||\n";
+    cout << "||_____________________________________________||\n";
+    cout << "|||||||||||||||||||||||||||||||||||||||||||||||||\n";
+}
+
+void printMap(Role& player) {
+    int playerX = player.getPosition().x, playerY = player.getPosition().y;
+
     system("cls"); // 清除屏幕
 
     // 計算視野範圍內的左上角和右下角
-    int startX = max(0, playerX - visionRange);
-    int startY = max(0, playerY - visionRange);
-    int endX = min(MAP_WIDTH - 1, playerX + visionRange);
-    int endY = min(MAP_HEIGHT - 1, playerY + visionRange);
+    int startX = max(0, playerX - VISIONRANGE * 2);
+    int startY = max(0, playerY - VISIONRANGE);
+    int endX = min(MAP_WIDTH - 1, playerX + VISIONRANGE * 2);
+    int endY = min(MAP_HEIGHT - 1, playerY + VISIONRANGE);
 
     // 打印視野範圍內的地圖
-    for (int y = startY; y <= endY; y++) {
-        for (int x = startX; x <= endX; x++) {
-            if (x == playerX && y == playerY) { // 檢查是否為玩家位置
+    for (int y = 0; y <= VISIONRANGE; y++) {
+        for (int x = 0; x <= VISIONRANGE*6; x++) {
+            if (startY + y >= MAP_HEIGHT || startX + x >= MAP_WIDTH)
+            {
+                cout << 'X';
+            }
+
+            else if (startX + x == playerX && startY + y == playerY) { // 檢查是否為玩家位置
                 printChr(PLAYER_ICON);
             }
             else {
-                printChr(gMap[y][x]);
+                printChr(gMap[startY + y][startX + x]);
             }
         }
-        cout << endl;
+        cout << " ||\n";
     }
 
-    cout << "Current location: " << "(" << playerX+1 << "," << playerY+1 << ")";
+    for (int i = 0; i <= VISIONRANGE * 6 + 3; i++)
+    {
+        cout << '=';
+    }
+
+    cout << "\n\n";
+    printInfo(player);
 }
 
 void keyUpdate(bool key[])
@@ -179,7 +209,7 @@ void update(bool key[], Role& player)
     else if (key[ValidInput::EQ]) {
         // the status list is already open, back to map
         if (showStatus) {
-            printMap(player.getPosition().x, player.getPosition().y, 10);
+            printMap(player);
         }
         showStatus = !showStatus;
     }
@@ -192,7 +222,7 @@ void update(bool key[], Role& player)
             }
         }
         if (allInvalid)
-            printMap(player.getPosition().x, player.getPosition().y, 10);
+            printMap(player);
             
             // use red color
             WORD colorSettings = FOREGROUND_RED;
@@ -205,11 +235,11 @@ void update(bool key[], Role& player)
     // do something according to the input
     if (hasInput) {
         player.move(delta);
-        printMap(player.getPosition().x, player.getPosition().y, 10);
+        printMap(player);
     }
     else if (openBag) {
         player.showBag();
-        printMap(player.getPosition().x, player.getPosition().y, 10);
+        printMap(player);
         openBag = !openBag;
     }
     else if (showStatus) {

@@ -20,8 +20,18 @@ private:  // define if role has the equipment to use skill
 	bool hasHeal = false;
 	bool hasSpeedUp = false;
 
-	// backpack, a vector of pointer, which stores all the equipments
-	vector<string> equip{ "woodenSword", "hammer"};
+	// number of activated equipments
+	int actiEquip = 0;
+
+	// name of all avilable equipments
+	vector<string> equip = {};
+
+	// equipments and their amount
+	map<string, int> equipNum;
+
+	// store if the equipment is activated
+	// if there are more than one same equipment
+	// one acitvated implies all activated 
 	map<string, bool> avalEquip = { { "woodenSword", false },
 								    { "hammer", false },
 								    { "giantHammer", false },
@@ -32,6 +42,9 @@ private:  // define if role has the equipment to use skill
 								    { "shoes", false },
 								    { "godsbeard", false },
 								    { "teleportScroll", false } };
+
+	// activated equipments and their amount
+	map<string, int> avalEquipNum;
 
 public:
 	static int money;
@@ -89,11 +102,11 @@ public:
 	
 	void showBag();
 	void chooseEquip();
-	void showChoosen(int);
+	void showChoosen(int, int);
 
 	void showStatus();
 
 	void showShop();
-	void showChoosenItem(int, int, vector<string>&);
-	bool buyItem(int, vector<string>&);
+	void showChoosenItem(int, int, map<string, int>&);
+	bool buyItem(int, map<string, int>&);
 };
