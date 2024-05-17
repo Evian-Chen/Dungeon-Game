@@ -3,6 +3,8 @@
 #include "Role.h"
 #include <windows.h>
 #include <conio.h>
+#include <cstdlib>
+#include <ctime>
 #include "allConstants.h"
 
 char gMap[MAP_HEIGHT][MAP_WIDTH];
@@ -74,13 +76,67 @@ void printChr(char ch)
     SetConsoleTextAttribute(hConsole, colorSettings);
 }
 
-void setUpMap()
-{
-    for (int y = 0; y < MAP_HEIGHT; y++) {
-        for (int x = 0; x < MAP_WIDTH; x++) {
+// ³B²z°g®c
+void divide(int x, int y, int width, int height) {
+    if (width < MIN_SIZE || height < MIN_SIZE) return;
+
+    bool horizontal = width < height;
+    if (width == height) {
+        horizontal = rand() % 2;
+    }
+
+    if (horizontal) {
+        // Divide horizontally
+        int wy = y + (rand() % (height - MIN_SIZE + 1) + MIN_SIZE / 2);
+        int px = x + (rand() % width);
+
+        for (int i = x; i < x + width; ++i) {
+            gMap[wy][i] = BLOCKED;
+        }
+        gMap[wy][px] = ROAD;
+
+        divide(x, y, width, wy - y);
+        divide(x, wy + 1, width, y + height - wy - 1);
+    }
+    else {
+        // Divide vertically
+        int wx = x + (rand() % (width - MIN_SIZE + 1) + MIN_SIZE / 2);
+        int py = y + (rand() % height);
+
+        for (int i = y; i < y + height; ++i) {
+            gMap[i][wx] = BLOCKED;
+        }
+        gMap[py][wx] = ROAD;
+
+        divide(x, y, wx - x, height);
+        divide(wx + 1, y, x + width - wx - 1, height);
+    }
+}
+
+void initializeBoard() {
+    for (int y = 0; y < MAP_HEIGHT; ++y) {
+        for (int x = 0; x < MAP_WIDTH; ++x) {
             gMap[y][x] = ROAD;
         }
     }
+}
+
+void setUpMap()
+{
+    srand(time(0));
+    initializeBoard();
+
+    // Add the border walls
+    for (int x = 0; x < MAP_WIDTH; ++x) {
+        gMap[0][x] = BLOCKED;
+        gMap[MAP_HEIGHT - 1][x] = BLOCKED;
+    }
+    for (int y = 0; y < MAP_HEIGHT; ++y) {
+        gMap[y][0] = BLOCKED;
+        gMap[y][MAP_WIDTH - 1] = BLOCKED;
+    }
+
+    divide(1, 1, MAP_WIDTH - 2, MAP_HEIGHT - 2);
 
     gMap[shopX][shopY] = SHOP;
     gMap[15][5] = ENEMY;
