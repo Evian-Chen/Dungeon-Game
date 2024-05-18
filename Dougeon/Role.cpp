@@ -400,12 +400,13 @@ void Role::showChoosen(int num, int maxWidth)
 
 void Role::showStatus()
 {
-	cout << "Vitality: " << vitality << '\n'
-		<< "focus: " << focus << '\n'
-		<< "speed: " << speed << '\n'
-		<< "hitRate: " << hitRate << '\n'
-		<< "physical Attack: " << pAttack << '\n'
-		<< "magic Attack: " << mAttack << '\n'
-		<< "physical Defense: " << pDefense << '\n'
-		<< "magic Defense: " << mDefense << '\n';
+	cout << "||===== Your status =====||\n\n";
+	cout << "|| ¡´ Vitality: " << setw(10) << vitality << '\n'
+		<< "|| ¡´ focus: " << setw(13) << focus << '\n'
+		<< "|| ¡´ speed: " << setw(13) << speed << '\n'
+		<< "|| ¡´ hitRate: " << setw(11) << hitRate << '\n'
+		<< "|| ¡´ physical Attack: " << setw(3) << pAttack << '\n'
+		<< "|| ¡´ magic Attack: " << setw(6) << mAttack << '\n'
+		<< "|| ¡´ physical Defense: " << setw(2) << pDefense << '\n'
+		<< "|| ¡´ magic Defense: " << setw(5) << mDefense << '\n';
 }

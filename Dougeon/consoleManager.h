@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Position.h"
 #include "Role.h"
 #include <windows.h>
 #include <conio.h>
@@ -30,6 +31,20 @@ enum ValidInput
 
     INVALID,
 };
+
+Position randPosGenerator()
+{
+    int x = rand() % MAP_HEIGHT;
+    int y = rand() % MAP_WIDTH;
+    while (gMap[x][y] != ROAD)
+    {
+        x = rand() % MAP_HEIGHT;
+        y = rand() % MAP_WIDTH;
+        cout << x << ' ' << y;
+    }
+    Position pos(x, y);
+    return pos;
+}
 
 void printChr(char ch)
 {
@@ -76,7 +91,7 @@ void printChr(char ch)
     SetConsoleTextAttribute(hConsole, colorSettings);
 }
 
-// 處理迷宮
+// for maze
 void divide(int x, int y, int width, int height) {
     if (width < MIN_SIZE || height < MIN_SIZE) return;
 
@@ -123,7 +138,7 @@ void initializeBoard() {
 
 void setUpMap()
 {
-    srand(time(0));
+    srand(1283568);
     initializeBoard();
 
     // Add the border walls
@@ -138,8 +153,11 @@ void setUpMap()
 
     divide(1, 1, MAP_WIDTH - 2, MAP_HEIGHT - 2);
 
-    gMap[shopX][shopY] = SHOP;
-    gMap[15][5] = ENEMY;
+    Position shopP = randPosGenerator();
+    gMap[shopP.getX()][shopP.getY()] = SHOP;
+
+    Position enemyP = randPosGenerator();
+    gMap[5][5] = ENEMY;
 }
 
 void printInfo(Role& player)
@@ -165,13 +183,13 @@ void printMap(Role& player) {
     system("cls"); // 清除屏幕
 
     // 計算視野範圍內的左上角和右下角
-    int startX = max(0, playerX - VISIONRANGE * 2);
+    int startX = max(0, playerX - VISIONRANGE);
     int startY = max(0, playerY - VISIONRANGE);
-    int endX = min(MAP_WIDTH - 1, playerX + VISIONRANGE * 2);
+    int endX = min(MAP_WIDTH - 1, playerX + VISIONRANGE);
     int endY = min(MAP_HEIGHT - 1, playerY + VISIONRANGE);
 
     // 打印視野範圍內的地圖
-    for (int y = 0; y <= VISIONRANGE; y++) {
+    for (int y = 0; y <= VISIONRANGE*2; y++) {
         for (int x = 0; x <= VISIONRANGE*6; x++) {
             if (startY + y >= MAP_HEIGHT || startX + x >= MAP_WIDTH)
             {
@@ -192,6 +210,8 @@ void printMap(Role& player) {
     {
         cout << '=';
     }
+
+    
 
     cout << "\n\n";
     printInfo(player);
@@ -302,4 +322,3 @@ void update(bool key[], Role& player)
         player.showStatus();
     }
 }
-

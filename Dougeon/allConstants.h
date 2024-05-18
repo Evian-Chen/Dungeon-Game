@@ -2,7 +2,7 @@
 
 const int MAP_WIDTH = 140;
 const int MAP_HEIGHT = 50;
-const int MIN_SIZE = 5;
+const int MIN_SIZE = 9;
 
 extern char gMap[MAP_HEIGHT][MAP_WIDTH];
 
@@ -12,9 +12,9 @@ const char BLOCKED = 'X';
 const char ENEMY = 'E';
 const char PLAYER_ICON = 'R';
 
-const int shopX = 44;
-const int shopY = 136;
+const int shopX = 2;
+const int shopY = 2;
 
-const int VISIONRANGE = 13;
+const int VISIONRANGE = 7;
 
 const int ACTEQUIPLIM = 10;

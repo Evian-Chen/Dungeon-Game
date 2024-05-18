@@ -16,13 +16,13 @@ using namespace std;
 
 
 // constants
-const double gTimeLog = 0.033;
+const double gTimeLog = 0.003;
 
 int main()
 {
     srand(time(NULL));
 
-    Role player1(138, 45);
+    Role player1(3, 5);
 
     // 用來管理鍵盤輸入狀態的陣列
     bool gKeyState[ValidInput::INVALID];
