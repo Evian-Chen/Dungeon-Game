@@ -2,6 +2,9 @@
 
 #include "Position.h"
 #include "Role.h"
+#include "Shop.h"
+#include "Enemy.h"
+#include "RandomEvent.h"
 #include <windows.h>
 #include <conio.h>
 #include <cstdlib>
@@ -79,6 +82,10 @@ void printChr(char ch)
         colorSettings |= BACKGROUND_RED;
         break;
 
+    case EVENT:
+        colorSettings |= FOREGROUND_RED;                    // red word for event icon
+        break;
+
     default:
         break;
     }
@@ -136,10 +143,10 @@ void initializeBoard() {
     }
 }
 
-void setUpMap()
+void setUpMap(vector<Shop*> shops, vector<Enemy*> enemies, vector<Role*> roles, vector<RandomEvent*> randoms)
 {
-    srand(1283568);
-    initializeBoard();
+    srand(1283568); // for devide (making maze)
+    // initializeBoard();
 
     // Add the border walls
     for (int x = 0; x < MAP_WIDTH; ++x) {
@@ -153,17 +160,39 @@ void setUpMap()
 
     divide(1, 1, MAP_WIDTH - 2, MAP_HEIGHT - 2);
 
-    Position shopP = randPosGenerator();
-    gMap[shopP.getX()][shopP.getY()] = SHOP;
+    for (int i = 0; i < shops.size(); i++)
+    {
+        gMap[shops[i]->getX()][shops[i]->getY()] = shops[i]->getIcon();
+    }
 
-    Position enemyP = randPosGenerator();
-    gMap[5][5] = ENEMY;
+    for (int i = 0; i < enemies.size(); i++)
+    {
+        gMap[enemies[i]->getX()][enemies[i]->getY()] = enemies[i]->getIcon();
+    }
+
 }
 
 void printInfo(Role& player)
 {
     // player info
-    cout << "\n|| ¡´ Player-1 is at (" << player.getPosition().x << ", " << player.getPosition().y << ")";
+    cout << "\n|| ¡´ Player-1 ¡´ ||\n";
+    cout << "|| ¡´ Position: " << player.getPosition().x << ", " << player.getPosition().y << ")\n";
+    cout << "|| ¡´ Vitality: ";
+
+    WORD colorSettings = BACKGROUND_BLUE;
+    SetConsoleTextAttribute(hConsole, colorSettings);
+    for (int i = 0; i < player.getVitality() / 100; i++)
+    {
+        cout << ' ';
+    }
+    colorSettings = BACKGROUND_INTENSITY;
+    colorSettings = FOREGROUND_INTENSITY;
+    SetConsoleTextAttribute(hConsole, colorSettings);
+
+    cout << ' ' << player.getVitality() << "/100\n";
+    cout << "|| ¡´ : Speed: " << player.getSpeed() << endl;
+    cout << "|| ¡´ : Avalible steps left: " << player.getAvalStep() << endl;
+
     cout << endl << endl;
 
     // width = 80

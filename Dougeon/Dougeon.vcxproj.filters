@@ -56,5 +56,8 @@
     <ClInclude Include="allConstants.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="RandomEvent.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

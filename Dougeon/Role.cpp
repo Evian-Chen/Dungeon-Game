@@ -77,12 +77,21 @@ void Role::speedUp()
 */
 
 void Role::move(const Position& delta) {
-	Position temp = pos + delta;
+	Position temp = position + delta;
 
 	// prevent role from going put of the range of gMap
 	if (temp.isPositionValid())
 	{
-		pos += delta;
+		if (avalstep == 0)
+		{
+			// step limit, time to throw the dice
+			throwDice();
+		}
+		else
+		{
+			position += delta;
+			avalstep--;
+		}
 	}
 	else if (temp.isOnShop())
 	{
@@ -105,6 +114,11 @@ void Role::move(const Position& delta) {
 		{
 			cout << "Invalid input, enter again.\n";
 		}
+	}
+	else if (temp.isOnEnemy())
+	{
+		// ready to combat
+		int a;
 	}
 }
 
@@ -395,7 +409,7 @@ void Role::showChoosen(int num, int maxWidth)
 	cout << "\n======== Your wallet. ========\n" << endl;
 	cout << "money: " << money << endl;
 
-	cout << "\n/** Double click B to exit. **/\n" << endl;
+	cout << "\n/** Click B to exit. **/\n" << endl;
 }
 
 void Role::showStatus()
@@ -410,3 +424,109 @@ void Role::showStatus()
 		<< "|| ¡´ physical Defense: " << setw(2) << pDefense << '\n'
 		<< "|| ¡´ magic Defense: " << setw(5) << mDefense << '\n';
 }
+
+void Role::throwDice()
+{
+	cout << "||=====================================||\n";
+	cout << "||=== It's your turn to roll dice! ====||\n";
+	cout << "||=====================================||\n\n\n";
+	cout << "|| ¡´ Do you want to use focus? (Y/N): ";
+
+	char input = _getch();
+	if (input == 'Y')
+	{
+		cout << input << "\n|| ¡´ How many points of focus you want to use?\n|| ¡´ Enetr here: ";
+		input = _getch();
+		int useFocus = input - '0';
+		cout << useFocus << endl;
+
+		while (useFocus > focus)
+		{
+			cout << "You don't have enough focus, enter again or enter 0 to continue: ";
+			input = _getch();
+			useFocus = input - '0';
+		}
+		
+		focus -= useFocus;
+		cout << "|| ¡´ You use " << input << " focus, press Enter to start rolling: ";
+		
+		while (input != '\r')
+		{
+			input = _getch();
+		}
+		showRollDice(useFocus);
+	}
+	else if (input == 'N')
+	{
+		cout << input << "\nPress Enter to start rolling! \n";
+
+		while (input != '\n')
+		{
+			input = _getch();
+		}
+		showRollDice(0);
+	}
+}
+
+void rollingAnime()
+{
+	cout << "\n\n||=== generating the result... ====||\n";
+	cout << "|| ";
+
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	WORD colorSettings = FOREGROUND_INTENSITY;
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+	for (int i = 0; i < 31; i++)
+	{
+		cout << ' ';
+		Sleep(100);
+	}
+
+	colorSettings = BACKGROUND_INTENSITY;
+	colorSettings = FOREGROUND_INTENSITY;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	cout << " ||\n\n";
+}
+
+void Role::showRollDice(int useFocus)
+{
+	string dice = "";
+	double chance = 0;
+	for (int i = 0; i < useFocus; i++)
+	{
+		dice += "T";
+		avalstep++;
+	}
+
+	srand(time(0));
+	for (int i = 0; i < maxMovePoint - useFocus; i++)
+	{
+		chance = (rand() % 100) / 100.0;
+		if (chance < diceAccRate) { dice += "T"; avalstep++; }
+		else { dice += "F"; }
+	}
+
+	rollingAnime();
+
+	cout << "Here's the result: ";
+
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	WORD colorSettings = FOREGROUND_INTENSITY;
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	cout << dice << endl;
+
+	colorSettings = BACKGROUND_INTENSITY;
+	colorSettings = FOREGROUND_INTENSITY;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+	cout << "\n\nYou have " << avalstep << " steps in this round.\n";
+
+	cout << "\n/** Click any key to exit. **/\n";
+	chance = _getch();
+}
+

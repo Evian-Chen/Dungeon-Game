@@ -139,6 +139,7 @@
     <ClInclude Include="GameObj.h" />
     <ClInclude Include="consoleManager.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="RandomEvent.h" />
     <ClInclude Include="Role.h" />
     <ClInclude Include="Shop.h" />
     <ClInclude Include="Skill.h" />

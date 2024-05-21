@@ -11,16 +11,84 @@
 #include "Position.h"
 #include "Role.h"
 #include "consoleManager.h"
+#include "RandomEvent.h"
 
 using namespace std;
 
-
-// constants
+// global variables
 const double gTimeLog = 0.003;
+
+// player vector
+vector<Role*> roles;
+
+// enemy vector
+vector<Enemy*> enemies;
+
+// shop vector
+vector<Shop*> shops;
+
+// random event
+vector<RandomEvent*> randoms;
 
 int main()
 {
-    srand(time(NULL));
+    initializeBoard();
+
+    /*
+    std::vector<Trigger*> gTriggers;
+    
+    for (int i = 0; i < 2; i++) {
+		Trigger* trigger = new Trigger();
+		Position tPos = getValidRandomPos();
+		validFlags[tPos.y][tPos.x] = false;
+		trigger->setPos(tPos);
+		gTriggers.push_back(trigger);
+	}
+    */
+
+    // add 15 shops
+    for (int i = 0; i < 15; i++) 
+    {
+        Shop* shop = new Shop();
+        Position pos = randPosGenerator();
+        shop->setPos(pos);
+        shops.push_back(shop);
+    }
+
+    // add 20 enemies
+    for (int i = 0; i < 20; i++)
+    {
+        Enemy* enemy = new Enemy();
+        Position pos = randPosGenerator();
+        enemy->setPos(pos);
+        enemies.push_back(enemy);
+    }
+
+    // add 10 random events
+    for (int i = 0; i < 10; i++)
+    {
+        RandomEvent* random = new RandomEvent();
+        Position pos = randPosGenerator();
+        random->setPos(pos);
+        randoms.push_back(random);
+    }
+
+    // add 1 role
+    for (int i = 0; i < 1; i++)
+    {
+        Role* role = new Role();
+        Position pos = randPosGenerator();
+        role->setPos(pos);
+        roles.push_back(role);
+    }
+
+
+
+    /***********************
+    * 從這裡開始修正
+    * 改變印出地圖的方式
+    ************************/
+
 
     Role player1(3, 5);
 
@@ -30,7 +98,7 @@ int main()
         gKeyState[i] = false;
     }
 
-    setUpMap();
+    setUpMap(shops, enemies, roles, randoms);
 
     printMap(player1);
 

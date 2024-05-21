@@ -8,13 +8,15 @@
 #include <iostream>
 #include <vector>
 #include <cstdlib> // For rand() and srand()
+#include "allConstants.h"
 // #include "allConstants.h"
 
 using namespace std;
 
 class Role : public Entity, public Equipment, public Shop
 {
-private:  // define if role has the equipment to use skill
+private:  
+	// define if role has the equipment to use skill
 	bool hasProvoke = false;
 	bool hasShockBlast = false;
 	bool hasHeal = false;
@@ -22,6 +24,10 @@ private:  // define if role has the equipment to use skill
 
 	// number of activated equipments
 	int actiEquip = 0;
+
+	int avalstep = 0;
+	int maxMovePoint = 0;
+	double diceAccRate = 0;
 
 	// name of all avilable equipments
 	vector<string> equip = {};
@@ -49,9 +55,34 @@ private:  // define if role has the equipment to use skill
 public:
 	static int money;
 
+	// item
+	static int godsBeard;
+	static int goldenRoot;
+
+	Role() {};
+
+	// default constructor
+	Role(Position p) : Entity(p), Equipment()
+	{
+		eicon = PLAYER_ICON;
+		vitality = 100;
+		focus = 3;
+		speed = 75;
+		hitRate = rand() % 21 + 40;
+		pAttack = rand() % 11 + 5;
+		mAttack = rand() % 11 + 5;
+		pDefense = rand() % 21;
+		mDefense = rand() % 21;
+		isDead = false;
+		inBattle = false;
+		maxMovePoint = speed / 10;
+		diceAccRate = min(0.9, ((float)speed / 100.0));
+	}
+
 	// default constructor
 	Role(int startX, int startY) : Entity(startX, startY), Equipment()
 	{
+		eicon = PLAYER_ICON;
 		vitality = rand() % 16 + 30;
 		focus = 3;
 		speed = rand() % 26 + 30;
@@ -62,12 +93,17 @@ public:
 		mDefense = rand() % 21;
 		isDead = false;
 		inBattle = false;
+		maxMovePoint = speed / 10;
+		diceAccRate = min(0.9, ((float)speed / 100.0));
 	}
 
+	// void setPos(Position p) { pos = p; }
+
 	// get role's position
-	Position getPosition() const {
-		return pos;
-	}
+	Position getPosition() { return position; }
+
+	// gameObj method
+	void render() {};
 
 	// Setter
 	void setHasProvoke() { hasProvoke = true; }
@@ -109,4 +145,8 @@ public:
 	void showShop();
 	void showChoosenItem(int, int, map<string, int>&);
 	bool buyItem(int, map<string, int>&);
+
+	void throwDice();
+	void showRollDice(int);
+	int getAvalStep() { return avalstep; }
 };
