@@ -3,17 +3,17 @@
 #include "Enemy.h"
 #include "Shop.h"
 // #include "Skill.h"
-#include "Equipment.h"
 #include "Position.h"
 #include <iostream>
 #include <vector>
+#include <Windows.h>
 #include <cstdlib> // For rand() and srand()
 #include "allConstants.h"
 // #include "allConstants.h"
 
 using namespace std;
 
-class Role : public Entity, public Equipment, public Shop
+class Role : public Entity, public Shop
 {
 private:  
 	// define if role has the equipment to use skill
@@ -29,6 +29,7 @@ private:
 	int maxMovePoint = 0;
 	double diceAccRate = 0;
 
+	
 	// name of all avilable equipments
 	vector<string> equip = {};
 
@@ -38,16 +39,15 @@ private:
 	// store if the equipment is activated
 	// if there are more than one same equipment
 	// one acitvated implies all activated 
-	map<string, bool> avalEquip = { { "woodenSword", false },
-								    { "hammer", false },
-								    { "giantHammer", false },
-								    { "woodenShield", false },
-								    { "plateArmor", false },
-								    { "robe", false },
-								    { "holyGrail", false },
-								    { "shoes", false },
-								    { "godsbeard", false },
-								    { "teleportScroll", false } };
+	map<string, bool> avalEquip = { 
+		{ "woodenSword", false },
+		{ "giantHammer", false },
+		{ "RitualSword", false },
+		{ "woodenShield", false },
+		{ "PlateArmor", false },
+		{ "robe", false },
+		{ "holyGrail", false },
+		{ "other", true } }; // other is for attack/flee (default)
 
 	// activated equipments and their amount
 	map<string, int> avalEquipNum;
@@ -58,15 +58,20 @@ public:
 	// item
 	static int godsBeard;
 	static int goldenRoot;
+	static int teleportScroll;
+
+	// during combat
+	int round = 0;
+	string curSkill = "";
 
 	Role() {};
 
 	// default constructor
-	Role(Position p) : Entity(p), Equipment()
+	Role(Position p) : Entity(p)
 	{
 		eicon = PLAYER_ICON;
 		vitality = 100;
-		focus = 3;
+		focus = 100;
 		speed = 75;
 		hitRate = rand() % 21 + 40;
 		pAttack = rand() % 11 + 5;
@@ -80,11 +85,11 @@ public:
 	}
 
 	// default constructor
-	Role(int startX, int startY) : Entity(startX, startY), Equipment()
+	Role(int startX, int startY) : Entity(startX, startY)
 	{
 		eicon = PLAYER_ICON;
-		vitality = rand() % 16 + 30;
-		focus = 3;
+		vitality = 100;
+		focus = 100;
 		speed = rand() % 26 + 30;
 		hitRate = rand() % 21 + 40;
 		pAttack = rand() % 11 + 5;
@@ -112,6 +117,9 @@ public:
 	void setHasSpeedUp() { hasSpeedUp = true; }
 	void setInBattle() { inBattle = true; }
 	void setVitality(int value) { vitality = value; }
+	void setFocus(int value) { focus = value; }
+	void setHitRate(int value) { hitRate = value; }
+	void setSpeed(int value) { speed = value; }
 
 	// Getter
 	int getVitality() const { return vitality; }
@@ -122,16 +130,50 @@ public:
 	int getMAttack() const { return mAttack; }
 	int getPDefense() const { return pDefense; }
 	int getMDefense() const { return mDefense; }
+	bool getInBattle()const { return inBattle; }
 
-	/*
-	void attack(Enemy& enemy);
-	void flee();
-	void provoke();
-	void shockBlast(Enemy& enemy);
-	void heal();
-	void speedUp();	
-	*/
+	
+	void attack(int, vector<Enemy*>&, int, int, int, HANDLE, WORD);
+	void provoke(int, vector<Enemy*>&, int, HANDLE, WORD);
+	void hammerSplash(vector<Enemy*>&, int, int);
+	void fortify();
+	void shockBlast(vector<Enemy*>&, int, int, int, HANDLE, WORD);
+	void heal(int, HANDLE, WORD);
+	void speedUp(int, HANDLE, WORD);
+	
+	void woodenSword() { pAttack += 5;  hitRate += 10; }
+	void hammer(){ pAttack += 15; hitRate -= 15;}
+	void giantHammer(){ pAttack += 20; hitRate -= 15; }
+	void woodenShield(){ pDefense += 10; }
+	void robe(){ mDefense += 10; }
+	void holyGrail(){ mDefense += 30; }
+	void ritualSword() { mAttack += 15; }
+	void plateArmor() { pDefense += 2; speed -= 10; }
+	// void teleportScroll(){ int a; }
 
+	// variable for combat
+	int numSkill = 0;
+	vector<string> skillVec = { "attack","flee","provoke","shockBlast","heal","speedUp" };
+	map<string, string> skillEquipMap = { 
+		{"attack","other"},
+		{"flee","other"},
+		{"provoke","WoodenShield"},
+		{"shockBlast","RitualSword"}, 
+		{"heal","HolyGrail"},
+		{"speedUp", "woodenSword"} };
+	map<string, void (Role::*)()> equipFuncList = {
+		{ "woodenSword", &Role::woodenSword },
+		{ "RitualSword", &Role::ritualSword },
+		{ "giantHammer", &Role::giantHammer },
+		{ "woodenShield", &Role::woodenShield },
+		{ "PlateArmor", &Role::plateArmor },
+		{ "robe", &Role::robe },
+		{ "holyGrail", &Role::holyGrail }
+	};
+
+	// for cool down skill/item/buff
+	int speedUpCool = 0;
+	int angryDebuff = 0;
 
 	// move role
 	void move(const Position& delta);
@@ -149,4 +191,11 @@ public:
 	void throwDice();
 	void showRollDice(int);
 	int getAvalStep() { return avalstep; }
+
+	void combat();
+	void showAllStatus(vector<Enemy*>&);
+	bool chooseSkill();
+	void chooseItem();
+	int chooseEnemy(vector<Enemy*>&);
+	void attackEnemy(vector<Enemy*>&, int, int);
 };

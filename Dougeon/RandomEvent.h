@@ -2,6 +2,7 @@
 
 #include "Position.h"
 #include "allConstants.h"
+#include "Role.h"
 
 class RandomEvent
 {
@@ -19,4 +20,9 @@ public:
 
 	// getter
 	Position getPos() { return this->ePos; }
+	char getIcon() { return this->icon; }
+	int getX() { return this->ePos.x; }
+	int getY() { return this->ePos.y; }
+
+	void randEvent(Role&);
 };

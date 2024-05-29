@@ -18,10 +18,13 @@
     <ClCompile Include="Role.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
-    <ClCompile Include="Shop.cpp">
+    <ClCompile Include="RandomEvent.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,19 +47,16 @@
     <ClInclude Include="Enemy.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="Equipment.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
     <ClInclude Include="Shop.h">
-      <Filter>標頭檔</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObj.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="allConstants.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="RandomEvent.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="HotSpring.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>

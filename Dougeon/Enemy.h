@@ -7,30 +7,33 @@
 class Enemy : public Entity
 {
 public:
+	int round = 0;
+
 	Enemy() : Entity()
 	{
-		vitality = rand() % 11 + 10;
-		speed = rand() % 26 + 30;
-		hitRate = rand() % 21 + 40;
-		pAttack = rand() % 11 + 5;
-		mAttack = rand() % 11 + 5;
-		pDefense = rand() % 21;
-		pDefense = rand() % 21;
+		vitality = 100;
+		speed = 5;
+		hitRate = 70;
+		pAttack = 10;
+		mAttack = 10;
+		pDefense = 10;
+		mDefense = 10;
 		isDead = false;
+		inBattle = true;
 		eicon = ENEMY;
 	}
 
 	Enemy(Position pos) : Entity(pos)
 	{
-		position = pos;
-		vitality = rand() % 11 + 10;
-		speed = rand() % 26 + 30;
-		hitRate = rand() % 21 + 40;
-		pAttack = rand() % 11 + 5;
-		mAttack = rand() % 11 + 5;
-		pDefense = rand() % 21;
-		pDefense = rand() % 21;
+		vitality = 100;
+		speed = 5;
+		hitRate = 70;
+		pAttack = 10;
+		mAttack = 10;
+		pDefense = 10;
+		mDefense = 10;
 		isDead = false;
+		inBattle = true;
 		eicon = ENEMY;
 	}
 
@@ -46,6 +49,10 @@ public:
 	int getPDefense() const { return pDefense; }
 	int getMDefense() const { return mDefense; }
 	int getIcon() const { return eicon; }
+	bool getIsDead()const { return isDead; }
+	int getX() { return this->position.x; }
+	int getY() { return this->position.y; }
+	char getIcon() { return this->eicon; }
 
 	// Setter methods
 	void setVitality(int value) { vitality = value; }
@@ -57,20 +64,13 @@ public:
 	void setX(int x) { this->position.x = x; }
 	void setY(int y) { this->position.y = y; }
 
-	// getter
-	int getX() { return this->position.x; }
-	int getY() { return this->position.y; }
-	char getIcon() { return this->eicon; }
+	// combat fun&variables
+	int angryDebuff = 0;
+	int attack();
+	bool provoke();
+	int shockBlast();
+	int heal();
+	// int speedUp();
 
-	void attack(Enemy& enemy) {};
-	void flee() {};
-	void provoke() {};
-	void shockBlast() {};
-	void heal() {};
-	void speedUp() {};
-
-	// undefine!!! from Entity update
-	// update position
-	// check if enemy has anything to do with role
-	void update();
+	void showStatus();
 };

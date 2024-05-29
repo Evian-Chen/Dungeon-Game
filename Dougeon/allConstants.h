@@ -8,6 +8,7 @@ extern char gMap[MAP_HEIGHT][MAP_WIDTH];
 
 const char ROAD = '.';
 const char EVENT = '!';
+const char HOTSPRING = 'H';
 const char SHOP = '$';
 const char BLOCKED = 'X';
 const char ENEMY = 'E';

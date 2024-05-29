@@ -30,21 +30,44 @@ vector<Shop*> shops;
 // random event
 vector<RandomEvent*> randoms;
 
+void startArt()
+{
+    cout << "      ___           ___           ___                                  ___           ___     \n";
+    cout << "     /\\__\\         /\\  \\         /\\  \\                                /\\  \\         /\\__\\    \n";
+    cout << "    /:/ _/_       /::\\  \\       /::\\  \\                  ___          \\:\\  \\       /:/ _/_   \n";
+    cout << "   /:/ /\\__\\     /:/\\:\\  \\     /:/\\:\\__\\                /\\__\\          \\:\\  \\     /:/ /\\__\\  \n";
+    cout << "  /:/ /:/  /    /:/  \\:\\  \\   /:/ /:/  /               /:/  /      ___ /::\\  \\   /:/ /:/ _/_ \n";
+    cout << " /:/_/:/  /    /:/__/ \\:\\__\\ /:/_/:/__/___            /:/__/      /\\  /:/\\:\\__\\ /:/_/:/ /\\__\\\n";
+    cout << " \\:\\/:/  /     \\:\\  \\ /:/  / \\:\\/:::::/  /           /::\\  \\      \\:\\/:/  \\/__/ \\:\\/:/ /:/  /\n";
+    cout << "  \\::/__/       \\:\\  /:/  /   \\::/~~/~~~~           /:/\\:\\  \\      \\::/__/       \\::/_/:/  / \n";
+    cout << "   \\:\\  \\        \\:\\/:/  /     \\:\\~~\\               \\/__\\:\\  \\      \\:\\  \\        \\:\\/:/  /  \n";
+    cout << "    \\:\\__\\        \\::/  /       \\:\\__\\            ___    \\:\\__\\ ___  \\:\\__\\        \\::/  /   \n";
+    cout << "     \\/__/         \\/__/____     \\/__/           /\\  \\    \\/__//\\__\\  \\/__/         \\/__/    \n";
+    cout << "                      |:|  |        ___          \\:\\  \\       /:/ _/_                        \n";
+    cout << "                      |:|  |       /\\__\\          \\:\\  \\     /:/ /\\  \\                       \n";
+    cout << "                    __|:|  |      /:/__/      _____\\:\\  \\   /:/ /::\\  \\                      \n";
+    cout << "                   /\\ |:|__|____ /::\\  \\     /::::::::\\__\\ /:/__\\/\\:\\__\\                     \n";
+    cout << "                   \\:\\/:::::/__/ \\/\\:\\  \\__  \\:\\~~\\~~\\/__/ \\:\\  \\ /:/  /                     \n";
+    cout << "                    \\::/~~/~      ~~\\:\\/\\__\\  \\:\\  \\        \\:\\  /:/  /                      \n";
+    cout << "                     \\:\\~~\\          \\::/  /   \\:\\  \\        \\:\\/:/  /                       \n";
+    cout << "                      \\:\\__\\         /:/  /     \\:\\__\\        \\::/  /                        \n";
+    cout << "                       \\/__/         \\/__/       \\/__/         \\/__/                         \n";
+    cout << "\n                                NTUST OOP 2024 Final Project" << endl;
+    cout << "\n                                 Press E to start the game." << endl;
+    Sleep(500);
+}
+
 int main()
 {
-    initializeBoard();
+    char input = -1;
 
-    /*
-    std::vector<Trigger*> gTriggers;
-    
-    for (int i = 0; i < 2; i++) {
-		Trigger* trigger = new Trigger();
-		Position tPos = getValidRandomPos();
-		validFlags[tPos.y][tPos.x] = false;
-		trigger->setPos(tPos);
-		gTriggers.push_back(trigger);
-	}
-    */
+    startArt();
+    while (input != 'E') {
+        input = _getch();
+    }
+    system("cls");
+
+    initializeBoard();
 
     // add 15 shops
     for (int i = 0; i < 15; i++) 
@@ -64,7 +87,7 @@ int main()
         enemies.push_back(enemy);
     }
 
-    // add 10 random events
+    // add 20 random events
     for (int i = 0; i < 10; i++)
     {
         RandomEvent* random = new RandomEvent();

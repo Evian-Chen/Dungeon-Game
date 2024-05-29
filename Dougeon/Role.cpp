@@ -1,125 +1,803 @@
 #include "Role.h"
+#include "Enemy.h"
+#include "RandomEvent.h"
 #include "Position.h"
 #include "allConstants.h"
 #include <utility>
+#include <algorithm>
 #include <iostream>
-#include <Windows.h>
 #include <conio.h>
 #include <iomanip>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
 int Role::money = 600;
+int Role::godsBeard = 3;
+int Role::goldenRoot = 3;
 
+RandomEvent random;
+vector<Enemy*> enemy;
 
-/*
-void Role::attack(Enemy& enemy)
+void rollingAnime()
 {
-	int cur = enemy.getVitality();
-	enemy.setVitality(cur - pAttack);
-	if (enemy.getVitality() <= 0)
+	cout << "\n\n||=== generating the result... ====||\n";
+	cout << "|| ";
+
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	WORD colorSettings = FOREGROUND_INTENSITY;
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+	for (int i = 0; i < 31; i++)
 	{
-		enemy.setDead(true);
+		cout << ' ';
+		Sleep(100);
 	}
-}
 
-void Role::flee()
-{
-	inBattle = false;
-}
+	colorSettings = BACKGROUND_INTENSITY;
+	colorSettings = FOREGROUND_INTENSITY;
+	SetConsoleTextAttribute(hConsole, colorSettings);
 
-void Role::provoke()
-{
-	if (!isProvokeCooldown())
-	{
-		int a;
-		// can provoke
-		// give enemy debuff::angry, last 3 rounds
-	}
-	else { updateCooldown(provokeCooldown); }
+	cout << " ||\n\n";
 }
-
-void Role::shockBlast(Enemy& enemy)
-{
-	if (!isShockBlastCooldown())
-	{
-		int cur = enemy.getVitality();
-		enemy.setVitality(cur - pAttack);
-		if (enemy.getVitality() <= 0)
-		{
-			enemy.setDead(true);
-		}
-	}
-	else { updateCooldown(shockBlastCooldown); }
-}
-
-void Role::heal()
-{
-	if (!isHealCooldown())
-	{
-		setVitality(100);
-	}
-	else { updateCooldown(healCooldown); }
-}
-
-void Role::speedUp()
-{
-	if (!isProvokeCooldown())
-	{
-		int a;
-		// can speedUp
-		// give self or partner buff::speedup, last one round
-	}
-	else { updateCooldown(provokeCooldown); }
-}
-
-*/
 
 void Role::move(const Position& delta) {
 	Position temp = position + delta;
 
-	// prevent role from going put of the range of gMap
-	if (temp.isPositionValid())
+	if (avalstep == 0)
 	{
-		if (avalstep == 0)
-		{
-			// step limit, time to throw the dice
-			throwDice();
-		}
-		else
+		// step limit, time to throw the dice
+		throwDice();
+	}
+	else
+	{
+		// prevent role from going put of the range of gMap
+		if (temp.isPositionValid())
 		{
 			position += delta;
 			avalstep--;
 		}
+		else if (temp.isOnShop())
+		{
+			cout << "======== Do you want to go to the shop? (Y/N) ========\nY/N:";
+			char input = _getch();
+			if (input == 'Y')
+			{
+				cout << input << "\nClick enter to go into the shop! :D\n";
+				input = _getch();
+				if (input == '\n') {};
+				showShop();
+			}
+			else if (input == 'N')
+			{
+				cout << input << "\nOkay, then you can click enter to get out. >:(\n";
+				input = _getch();
+				if (input == '\n') {};
+			}
+			else
+			{
+				cout << "Invalid input, enter again.\n";
+			}
+		}
+		else if (temp.isOnEnemy())
+		{
+			combat();
+			gMap[temp.getY()][temp.getX()] = ROAD;
+		}
+		else if (temp.isOnRandom())
+		{
+			// random event is triggered
+			random.randEvent(*this);
+			// need to delete the icon, check the coordinate
+			gMap[temp.getY()][temp.getX()] = ROAD;
+		}
 	}
-	else if (temp.isOnShop())
+}
+
+void Role::attack(int enemyNum, vector<Enemy*>& es, int pHarm, int eAbsorption, int successRate, HANDLE hConsole, WORD colorSettings)
+{
+	cout << "|| ¡´ Since your skill is attack, you need to roll ONE dice.\n"
+		<< "Press any key to roll the dice!\n";
+	char input = _getch();
+	rollingAnime();
+
+	if (!angryDebuff) {
+		if (successRate >= 30) { successRate -= 30; } // if angryDebuff is not 0
+	}	cout << "|| ¡´ Success Rate is: " << successRate << endl;
+	cout << "|| ¡´ Result: ";
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	// roll dice
+	if (rand() % 100 < successRate) { // success
+		cout << "T";
+		colorSettings = BACKGROUND_INTENSITY;
+		colorSettings = FOREGROUND_INTENSITY;
+		SetConsoleTextAttribute(hConsole, colorSettings);
+
+		cout << "|| ¡´ You can attack the enemy!\n";
+
+		// caculate harm and absorption
+		eAbsorption = es[enemyNum]->getMDefense() / (es[enemyNum]->getMDefense() + 50);
+		pHarm = floor(pAttack * (1 - eAbsorption));
+		cout << "|| ¡´ You caused " << pHarm << " damage on " << enemyNum << "'s enemy!\n";
+		es[enemyNum]->setVitality(es[enemyNum]->getVitality() - pHarm);
+	}
+	else { // failed
+		cout << "F";
+		colorSettings = BACKGROUND_INTENSITY;
+		colorSettings = FOREGROUND_INTENSITY;
+		SetConsoleTextAttribute(hConsole, colorSettings);
+		cout << "|| ¡´ So sad, you failed to attack this enemy:(\n";
+	}
+}
+
+void Role::provoke(int enemyNum, vector<Enemy*>& es, int successRate, HANDLE hConsole, WORD colorSettings)
+{
+	cout << "|| ¡´ Since your skill is provoke, you need to roll ONE dice.\n"
+		<< "Press any key to roll the dice!\n";
+	char input = _getch();
+	rollingAnime();
+
+	successRate = vitality / (100 + pAttack + mAttack);
+	if (!angryDebuff) {
+		if (successRate >= 30) { successRate -= 30; } // if angryDebuff is not 0
+	}	cout << "|| ¡´ Success Rate is: " << successRate << endl;
+	cout << "|| ¡´ Result: ";
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	// roll dice
+	if (rand() % 100 < successRate) { // success
+		cout << "T";
+		colorSettings = BACKGROUND_INTENSITY;
+		colorSettings = FOREGROUND_INTENSITY;
+		SetConsoleTextAttribute(hConsole, colorSettings);
+
+		cout << "|| ¡´ You can use provoke!\n" <<
+			"|| ¡´ Now this enemy has angry debuff!\n";
+		es[enemyNum]->angryDebuff += 3;
+	}
+	else { // failed
+		cout << "F";
+		colorSettings = BACKGROUND_INTENSITY;
+		colorSettings = FOREGROUND_INTENSITY;
+		SetConsoleTextAttribute(hConsole, colorSettings);
+		cout << "|| ¡´ So sad, you failed to provoke this enemy:(\n";
+	}
+}
+
+void Role::shockBlast(vector<Enemy*>& es, int mHarm, int eAbsorption, int successRate, HANDLE hConsole, WORD colorSettings)
+{
+	cout << "|| ¡´ Since your skill is shockBlast, you need to roll 3 dice.\n"
+		<< "Press any key to roll the dice!\n";
+	char input = _getch();
+	rollingAnime();
+
+	successRate -= 5;
+	if (!angryDebuff) {
+		if (successRate >= 30) { successRate -= 30; } // if angryDebuff is not 0
+	}	cout << "|| ¡´ Success Rate is: " << successRate << endl;
+	cout << "|| ¡´ Result: ";
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	int successDice = 0;
+
+	for (int i = 0; i < 3; i++) { // roll three dice
+		if (rand() % 100 < successRate) {
+			cout << "T";
+			successDice++;
+		}
+		else { cout << "F"; }
+	}
+	cout << endl;
+
+	colorSettings = BACKGROUND_INTENSITY;
+	colorSettings = FOREGROUND_INTENSITY;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	if (!successDice) { // there's at least one T dice
+		mHarm = floor(mAttack * 0.5 * (successDice / 3));
+		cout << "|| ¡´ You can use shockBlast!\n|| ¡´ You can caused attack every enemy!\n";
+		for (int i = 0; i < es.size(); i++) { // cause damage on every enemy
+			eAbsorption = es[i]->getMDefense() / (es[i]->getMDefense() + 50);
+			mHarm = floor(pAttack * (1 - eAbsorption));
+			if (!es[i]->getIsDead()) {
+				cout << "|| ¡´ You caused " << mHarm << " damage on " << i << "'s enemy!\n";
+				es[i]->setVitality(es[i]->getVitality() - mHarm);
+			}
+		}
+	}
+	else { // failed
+		cout << "|| ¡´ So sad, you failed to use shockBlast:(\n";
+	}
+}
+
+void Role::heal(int successRate, HANDLE hConsole, WORD colorSettings)
+{
+	cout << "|| ¡´ Since your skill is heal, you need to roll TWO dice.\n"
+		<< "Press any key to roll the dice!\n";
+	char input = _getch();
+	rollingAnime();
+
+	if (!angryDebuff) {
+		if (successRate >= 30){ successRate -= 30; } // if angryDebuff is not 0
+	}
+	
+	cout << "|| ¡´ Success Rate is: " << successRate << endl;
+	cout << "|| ¡´ Result: ";
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	int successDice = 0;
+
+	for (int i = 0; i < 2; i++) { // roll three dice
+		if (rand() % 100 < successRate) {
+			cout << "T";
+			successDice++;
+		}
+		else { cout << "F"; }
+	}
+	cout << endl;
+
+	colorSettings = BACKGROUND_INTENSITY;
+	colorSettings = FOREGROUND_INTENSITY;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	if (!successDice) { // there's at least one T dice
+		cout << "|| ¡´ You can use heal!\n";
+		cout << "|| ¡´ You can regain " << mAttack * 1.5 * (successDice / 2) << vitality;
+	}
+	else { // failed
+		cout << "|| ¡´ So sad, you failed to use heal:(\n";
+	}
+}
+
+void Role::speedUp(int successRate, HANDLE hConsole, WORD colorSettings)
+{
+	cout << "|| ¡´ Since your skill is heal, you need to roll TWO dice.\n"
+		<< "Press any key to roll the dice!\n";
+	char input = _getch();
+	rollingAnime();
+
+	if (!angryDebuff) {
+		if (successRate >= 30) { successRate -= 30; } // if angryDebuff is not 0
+	}
+
+	cout << "|| ¡´ Success Rate is: " << successRate << endl;
+	cout << "|| ¡´ Result: ";
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	int successDice = 0;
+
+	for (int i = 0; i < 2; i++) { // roll three dice
+		if (rand() % 100 < successRate) {
+			cout << "T";
+			successDice++;
+		}
+		else { cout << "F"; }
+	}
+	cout << endl;
+
+	colorSettings = BACKGROUND_INTENSITY;
+	colorSettings = FOREGROUND_INTENSITY;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	if (!successDice) { // there's at least one T dice
+		cout << "|| ¡´ You can use speedUp!\n";
+		speedUpCool = 1;
+		speed *= 1.5;
+		cout << "|| ¡´ Your speed now is " << speed << "!\n";
+	}
+	else { // failed
+		cout << "|| ¡´ So sad, you failed to use speedUp:(\n";
+	}
+}
+
+// passive skill
+void Role::hammerSplash(vector<Enemy*>& es, int pHarm, int eAbsorption)
+{
+	cout << "|| ¡´ You activated the PASSIVE SKILL hammer-splash!\n"
+		<< "You can cause extra 50% damage on each enemy!\n";
+	char input = _getch();
+
+	// caculate harm and absorption
+	for (int i = 0; i < es.size(); i++) {
+		if (!es[i]->getIsDead()) { // this enemy is not dead yet
+			eAbsorption = es[i]->getMDefense() / (es[i]->getMDefense() + 50);
+			pHarm = floor(pAttack * (1 - eAbsorption) * 0.5);
+			cout << "|| ¡´ You caused " << pHarm << " damage on " << i << "'s enemy!\n";
+			es[i]->setVitality(es[i]->getVitality() - pHarm);
+		}
+	}
+}
+
+bool isCombatOver(Role& player, vector<Enemy*> es)
+{
+	// if player use flee, inBattle will be false
+	if (!player.getInBattle()) { return true; }
+	for (int i = 0; i < 3; i++)
 	{
-		cout << "======== Do you want to go to the shop? (Y/N) ========\nY/N:";
-		char input = _getch();
-		if (input == 'Y')
-		{
-			cout << input << "\nClick enter to go into the shop! :D\n";
-			input = _getch();
-			if (input == '\n') {};
-			showShop();
-		}
-		else if (input == 'N')
-		{
-			cout << input << "\nOkay, then you can click enter to get out. >:(\n";
-			input = _getch();
-			if (input == '\n') {};
-		}
-		else
-		{
-			cout << "Invalid input, enter again.\n";
+		// even just one alive, then combat continue
+		if (!es[i]->getIsDead()) { return false; }
+	}
+	return true;
+}
+
+// show all enemies and player's status
+void Role::showAllStatus(vector<Enemy*>& es)
+{
+	// print out icon and status
+	for (int i = 0; i < 3; i++) {
+		cout << 'E' << i + 1 << "'s status:\n";
+		es[i]->showStatus();
+		cout << endl;
+	}
+
+	showStatus();
+}
+
+// this function return a bool which represent if the user has chosen a valid skill
+// also, it updates variable curSkill, curSkill is the chosen skill which is going to be used in battle phase
+bool Role::chooseSkill()
+{
+	system("cls");
+	cout << "||=====================================||\n";
+	cout << "||===== It's your turn to attack! =====||\n";
+	cout << "||=====================================||\n\n";
+	showStatus();
+	cout << "\n||===== Here's avalible equipment =====||\n";
+	for (auto& pair : avalEquip) {
+		if (pair.second && pair.first != "other") {
+			cout << pair.first << ' ';
 		}
 	}
-	else if (temp.isOnEnemy())
+
+	cout << "\n\n|| ¡´ ENTER TO CHOOSE YOUR SKILL ¡´ ||\n";
+
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	WORD colorSettings = FOREGROUND_INTENSITY;
+	colorSettings |= BACKGROUND_INTENSITY;
+
+	// print out current chosen skill
+	for (int i = 0; i < skillVec.size(); i++) {
+		// the chosen one will be red
+		if (i == numSkill) { colorSettings = FOREGROUND_RED; }
+		else { colorSettings = FOREGROUND_INTENSITY; }
+		SetConsoleTextAttribute(hConsole, colorSettings);
+		cout << skillVec[i] << std::endl;
+	}
+
+	// for the last output
+	colorSettings = FOREGROUND_INTENSITY;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	char input = _getch();
+
+	if (input == 80 && numSkill >= 0) { // up is clicked
+		if (numSkill < skillVec.size()) { numSkill++; }
+	}
+	else if (input == 72 && numSkill < skillVec.size()) { // down is clicked
+		if (numSkill > 0) { numSkill--; }
+	}
+	else if (input == 13) { // enter is clicked
+		// check if the required equipment of this skill is valiable
+		if (avalEquip[skillEquipMap[skillVec[numSkill]]]) {
+			curSkill = skillVec[numSkill];
+			return true;
+		}
+		else { // player doesn't have this equipment, so that skill is invalid
+			cout << "You don't have the cooresponding equipment to use this skill!\n";
+			cout << "/** Press any key to continue **/\n";
+			input = _getch();
+		}
+	}
+
+	// to keep while loop running
+	return false;
+}
+
+void Role::chooseItem()
+{
+	system("cls");
+	cout << "||=====================================||\n";
+	cout << "||===== It's your turn to attack! =====||\n";
+	cout << "||=====================================||\n\n\n";
+
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	WORD colorSettings = FOREGROUND_INTENSITY;
+
+	// hightlight the skill
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+	cout << "|| ¡´ You've chosen " << skillVec[numSkill] << " ¡´ || \n\n";
+
+	colorSettings = BACKGROUND_INTENSITY;
+	colorSettings = FOREGROUND_INTENSITY;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	char input;
+
+	if (godsBeard == 0 && goldenRoot == 0) { // no item avaliable
+		cout << "You don't have any item to use. Click eny key to exit.\n";
+	}
+	else {
+		cout << "Now you can choose if you want to apply special item.\n1. godsBeard adds 25 points vitality.\n2. goldenRoot adds 3 focus.\n\n";
+		// check items seperately
+		if (godsBeard) {
+			cout << "|| ¡´ You have " << godsBeard << " godsBeard.\n";
+			cout << "|| ¡´ Click ENTER to apply ONE ";
+			colorSettings = FOREGROUND_RED;
+			SetConsoleTextAttribute(hConsole, colorSettings);
+			cout << "godsBeard.";
+			colorSettings = FOREGROUND_INTENSITY;
+			SetConsoleTextAttribute(hConsole, colorSettings);
+			cout << "\n|| ¡´ Or click any key otherwise.\n";
+
+			input = _getch();
+			if (input == '\r') { // use godsBeard
+				vitality += 25;
+				godsBeard--;
+				// hightlight the vitality
+				colorSettings = BACKGROUND_GREEN;
+				colorSettings |= BACKGROUND_RED;
+				SetConsoleTextAttribute(hConsole, colorSettings);
+				cout << "|| ¡´ You've used godsBeard! ¡´ || \n";
+				cout << "|| ¡´ Your vitality is : " << vitality << endl;
+				colorSettings = BACKGROUND_INTENSITY;
+				colorSettings = FOREGROUND_INTENSITY;
+				SetConsoleTextAttribute(hConsole, colorSettings);
+			}
+		}
+			
+		if (goldenRoot) {
+			cout << "|| ¡´ You have " << goldenRoot << " godsBeard.\n";
+			cout << "|| ¡´ Click ENTER to apply ONE ";
+			colorSettings = FOREGROUND_RED;
+			SetConsoleTextAttribute(hConsole, colorSettings);
+			cout << "goldenRoot.";
+			colorSettings = FOREGROUND_INTENSITY;
+			SetConsoleTextAttribute(hConsole, colorSettings);
+			cout << "\n|| ¡´ Or click any key otherwise.\n";
+
+			input = _getch();
+			if (input == '\r') {
+				focus += 3;
+				goldenRoot--;
+				// hightlight the focus
+				colorSettings = BACKGROUND_GREEN;
+				colorSettings |= BACKGROUND_RED;
+				SetConsoleTextAttribute(hConsole, colorSettings);
+				cout << "|| ¡´ You've used goldenRoot! ¡´ || \n";
+				cout << "|| ¡´ Your focus is : " << focus << endl;
+				colorSettings = BACKGROUND_INTENSITY;
+				colorSettings = FOREGROUND_INTENSITY;
+				SetConsoleTextAttribute(hConsole, colorSettings);
+			}
+		}
+	}
+	cout << "/** Click any key to exit **/";
+	input = _getch();
+}
+
+int Role::chooseEnemy(vector<Enemy*>& es)
+{
+	system("cls");
+	cout << "||=====================================||\n";
+	cout << "||===== It's your turn to attack! =====||\n";
+	cout << "||=====================================||\n\n\n";
+	cout << "|| ¡´ Now, you need to choose ONE enemy to attak.\n"
+		"|| ¡´ The following shows all status of each alive enemy.\n\n";
+
+	for (int i = 0; i < es.size(); i++) {
+		if (!es[i]->getIsDead()) { // if this enemy is not dead
+			cout << "the " << i + 1 << "'s enemy: \n";
+			es[i]->showStatus();
+			cout << endl;
+		}
+	}
+
+	cout << "Enter the number of enemy that you want to attack: ";
+	char num = _getch();
+	int a = num - '0';
+	while (es[a]->getIsDead()) { // the chosen enemy should not be dead
+		cout << "This enemy is dead, choose again!\n";
+		num = _getch();
+		a = num - '0';
+	}
+
+	cout << "/** Click any key to exit **/";
+	char input = _getch();
+
+	// return the index of the enemy that has been chosen
+	return a;
+}
+
+void Role::attackEnemy(vector<Enemy*> &es, int enemyNum, int angryDebuff)
+{
+	system("cls");
+
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	WORD colorSettings = FOREGROUND_INTENSITY;
+	cout << "||=====================================||\n";
+	cout << "||===== It's your turn to attack! =====||\n";
+	cout << "||=====================================||\n\n\n";
+	
+	char input;
+	int successRate = hitRate;
+
+	// assign back to the original after this round of attacking
+	int tempPA = pAttack, tempPD = pDefense, tempMA = mAttack, tempMD = mDefense, tempS = speed;
+	cout << "|| ¡´ The following are your activated equipment and attack power: \n\n";
+
+	colorSettings = BACKGROUND_GREEN;
+	colorSettings |= BACKGROUND_RED;
+	SetConsoleTextAttribute(hConsole, colorSettings);
+
+	// check every equipment and apply it
+	for (auto& pair : equipFuncList) {
+		if (avalEquip[pair.first]) {
+			cout << pair.first << " ";
+
+			// player can activate multiple equipment at once, use for loop
+			for (int i = 0; i < avalEquipNum[pair.first]; i++) { 
+				equipFuncList[pair.first];
+			}
+
+			// print out the amount of equip
+			cout << "     " << avalEquipNum[pair.first] << "X\n";
+		}
+	}
+	cout << endl << endl;
+
+	cout << "|| ¡´ Here's your status: \n";
+	showStatus();
+
+	int eAbsorption = 0, pHarm = 0, mHarm = 0;
+
+	if (curSkill == "attack") {
+		attack(enemyNum, es, pHarm, eAbsorption, successRate, hConsole, colorSettings);
+		if (avalEquip["giantManner"]) {
+			hammerSplash(es, pHarm, eAbsorption);
+		}
+	}
+	else if (curSkill == "provoke") {
+		provoke(enemyNum, es, successRate, hConsole, colorSettings);
+	}
+	else if (curSkill == "shockBlast") {
+		shockBlast(es, mHarm, eAbsorption, successRate, hConsole, colorSettings);
+	}
+	else if (curSkill == "heal") {
+		heal(successRate, hConsole, colorSettings);
+	}
+	else if (curSkill == "speedUp") {
+		speedUp(successRate, hConsole, colorSettings);
+	}
+
+	// check if this enemy is dead or not, if not,  print out the status of this enemy
+	if (es[enemyNum]->getVitality() == 0) { // dead
+		cout << "|| ¡´ This enemy is dead! You earn 700 coins as a prize!\n";
+		money += 700;
+		es[enemyNum]->setDead(true);
+	}
+	else {
+		cout << "|| ¡´ The following is the new status of every enemy:\n";
+		for (int i = 0; i < es.size(); i++) {
+			es[i]->showStatus();
+		}
+	}
+
+	if (!angryDebuff) { angryDebuff--; }
+
+	// Since items activate every time before attacking, 
+	// all status must return to original status after every round,
+	pAttack = tempPA;
+	pDefense = tempPD;
+	mAttack = tempMA;
+	mDefense = tempMD;
+	speed = tempS;
+
+	cout << "/** Your turn is over. Click any key to the caombat field.\n";
+	input = _getch();
+}
+
+void Role::combat()
+{
+	// set up enemies
+	vector<Enemy*> es;
+	for (int i = 0; i < 3; i++) {
+		Enemy* enem = new Enemy();
+		es.push_back(enem);
+	}
+
+	// in battle phase
+	inBattle = true;
+	char input;
+
+	// combat loop
+	while (!isCombatOver(*this, es))
 	{
-		// ready to combat
-		int a;
+		system("cls");
+
+		// this is only for not in battle field (before take turn to attack)
+		showAllStatus(es);
+		cout << "/** Click any key to continue **/\n";
+		input = _getch();
+		
+		/*
+		* First! get the priority of every entity!
+		*/
+
+
+		// order array will help to set the order, for instance, 
+		/* { 3 1 2 0 } means player goes first, then the enemy of index of 1, 2, 0
+		// 0-2 are enymies' indexes of vetor, 3 is player
+		*/ 
+		int order[4] = { 0,1,2,3 };
+		int pri = 0;
+
+		// {index, pri}
+		pair<int, int> priority[4] = { {0, 0}, {1, 0}, {2, 0}, {3, 0} };
+		pair<int, int> newPriority[4] = { {0, 0}, {1, 0}, {2, 0}, {3, 0} };
+
+		// decide order
+		for (int i = 0; i < 4; i++) {
+
+			// priority[i].first is index
+			if (priority[i].first != 3) {
+				pri = (es[priority[i].first]->round + 1) / es[priority[i].first]->getSpeed();
+				newPriority[i] = make_pair(priority[i].first, pri);
+			}
+			else {
+				pri = (round + 1) / getSpeed();
+				newPriority[i] = make_pair(3, pri);
+			}
+		}
+		copy(newPriority, newPriority + 4, priority);
+		
+		// sort priority by the first 
+		std::sort(priority, priority + 4, [](const auto& a, const auto& b) {
+			return a.second < b.second;
+		});
+
+		/*
+		* Second! Start to attack!
+		*/
+		// initialize all harm and debuff setting
+		int pHarm = 0, mHarm = 0, absorption = 0, enemyNum = -1;
+		bool UseAngryDebuff = false;
+
+		// battle phase, take turn
+		for (auto& pair : priority) {
+			
+			// for printing out only one entity on the console
+			system("cls");
+
+			// enemy's turn to attak player
+			if (pair.first != 3) { 
+				cout << "||=====================================||\n";
+				cout << "||=== It's E" << pair.first + 1 << "'s turn to roll dice! ====||\n";
+				cout << "||=====================================||\n\n\n";
+
+				// caculate harm on player
+				switch (rand() % 5) {
+				case 0:
+					pHarm = es[pair.first]->attack(); 
+					cout << "|| ¡¶ It used PHYSICAL ATTACK!! \n";
+					if (avalEquip["PlateArmor"]) {
+						cout << "|| ¡¶ Since you've activated the PlateArmor,\nYou have the passive skill FORTIFY, which reduce 10% damage!\n";
+						pHarm *= 0.9;
+					}
+					cout << "|| ¡¶ DAMAGE: " << pHarm << "\n"; 
+					break;
+				case 1:
+					UseAngryDebuff = es[pair.first]->provoke();
+					cout << "|| ¡¶ It used PROVOKE!! \n"
+						"|| ¡¶ You've gotten ANGRY DEBUFF!!\n";
+					break;
+				case 2:
+					mHarm = es[pair.first]->shockBlast(); 
+					cout << "|| ¡¶ It used MAGIC ATTACK!! \n";
+					if (avalEquip["PlateArmor"]) {
+						cout << "|| ¡¶ Since you've activated the PlateArmor,\nYou have the passive skill FORTIFY, which reduce 10% damage!\n";
+						mHarm *= 0.9;
+					}
+					cout << "|| ¡¶ DAMAGE: " << mHarm << "\n"; 
+					break;
+				case 3:
+					mHarm = es[pair.first]->heal();  // attack 
+					cout << "|| ¡¶ It used HEAL!! \n";;
+					if (mHarm != 0) { 
+						vitality = 100; 
+						cout << "|| ¡¶ This enemy re-fill the vitality th 100!!\n";
+					}  // self heal
+					else {
+						cout << "|| ¡¶ But it didn't re-fill its vitality.\n";
+					}
+					break;
+
+				/** buff not defined yet!!! 
+				case 4:
+					harm = es[pair.first]->speedUp(); break;
+				**/
+
+				default:
+					cout << "|| ¡¶ You are lucky! \n"
+						"|| ¡¶ This enemy failed to have any valid dice!\n";
+				}
+
+				es[pair.first]->round++;
+				
+				// update player status
+				if (UseAngryDebuff) {
+					UseAngryDebuff = false;
+					angryDebuff += 3;
+				}
+				else {
+					// check if it's mAttack or pAttack
+					if (mHarm != 0) {
+						absorption = (double)mAttack / (mAttack + 50);
+						mHarm *= (1 - absorption);
+						vitality -= mHarm;
+					}
+					else if (pHarm != 0) {
+						absorption = (double)pAttack / (pAttack + 50);
+						pHarm *= (1 - absorption);
+						vitality -= pHarm;
+					}
+				}
+
+				cout << "/** Press Enter to continue... **/\n";
+				input = _getch();
+				while (input != '\r') {
+					input = _getch();
+				}
+
+			}
+			else { // player's turn to throw attack
+				
+				// for showing the chosen skill, and remember the skill name
+				numSkill = 0;
+
+				// run until the chosen skill is valid
+				while (1) {
+					if (chooseSkill()) { break; }
+				}
+
+				// check flee
+				if (curSkill == "flee") {
+					cout << "You've chosen flee, click Enter to exit.";
+					char input = _getch();
+					inBattle = false;
+					return;
+				}
+
+				// choose item before combat
+				chooseItem();
+
+				// choose enemy to attack
+				enemyNum = chooseEnemy(es);
+
+				attackEnemy(es, enemyNum, angryDebuff);
+				
+				// check angry debuff before throwing dice
+			}
+		}
 	}
+
+	// initialize all buff/debuff
+	angryDebuff = 0;
+	speedUpCool = 0;
 }
 
 void Role::showShop()
@@ -414,7 +1092,7 @@ void Role::showChoosen(int num, int maxWidth)
 
 void Role::showStatus()
 {
-	cout << "||===== Your status =====||\n\n";
+	cout << "||============= Your status =============||\n\n";
 	cout << "|| ¡´ Vitality: " << setw(10) << vitality << '\n'
 		<< "|| ¡´ focus: " << setw(13) << focus << '\n'
 		<< "|| ¡´ speed: " << setw(13) << speed << '\n'
@@ -422,14 +1100,19 @@ void Role::showStatus()
 		<< "|| ¡´ physical Attack: " << setw(3) << pAttack << '\n'
 		<< "|| ¡´ magic Attack: " << setw(6) << mAttack << '\n'
 		<< "|| ¡´ physical Defense: " << setw(2) << pDefense << '\n'
-		<< "|| ¡´ magic Defense: " << setw(5) << mDefense << '\n';
+		<< "|| ¡´ magic Defense: " << setw(5) << mDefense << '\n'
+		<< "|| ¡´ godSbeard: " << setw(9) << godsBeard << '\n'
+		<< "|| ¡´ goldenRoot: " << setw(8) << goldenRoot << '\n'
+		<< "|| ¡´ Money: " << setw(13) << money << '\n';
 }
 
+// for taking steps
 void Role::throwDice()
 {
 	cout << "||=====================================||\n";
 	cout << "||=== It's your turn to roll dice! ====||\n";
 	cout << "||=====================================||\n\n\n";
+	cout << "|| ¡´ You have " << getFocus() << " focus left.\n";
 	cout << "|| ¡´ Do you want to use focus? (Y/N): ";
 
 	char input = _getch();
@@ -460,35 +1143,12 @@ void Role::throwDice()
 	{
 		cout << input << "\nPress Enter to start rolling! \n";
 
-		while (input != '\n')
+		while (input != '\r')
 		{
 			input = _getch();
 		}
 		showRollDice(0);
 	}
-}
-
-void rollingAnime()
-{
-	cout << "\n\n||=== generating the result... ====||\n";
-	cout << "|| ";
-
-	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-	WORD colorSettings = FOREGROUND_INTENSITY;
-	colorSettings = BACKGROUND_GREEN;
-	colorSettings |= BACKGROUND_RED;
-	SetConsoleTextAttribute(hConsole, colorSettings);
-	for (int i = 0; i < 31; i++)
-	{
-		cout << ' ';
-		Sleep(100);
-	}
-
-	colorSettings = BACKGROUND_INTENSITY;
-	colorSettings = FOREGROUND_INTENSITY;
-	SetConsoleTextAttribute(hConsole, colorSettings);
-
-	cout << " ||\n\n";
 }
 
 void Role::showRollDice(int useFocus)
@@ -524,7 +1184,7 @@ void Role::showRollDice(int useFocus)
 	colorSettings = BACKGROUND_INTENSITY;
 	colorSettings = FOREGROUND_INTENSITY;
 	SetConsoleTextAttribute(hConsole, colorSettings);
-	cout << "\n\nYou have " << avalstep << " steps in this round.\n";
+	cout << "\n\nYou have " << avalstep << " True in this round.\n";
 
 	cout << "\n/** Click any key to exit. **/\n";
 	chance = _getch();

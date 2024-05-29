@@ -160,38 +160,55 @@ void setUpMap(vector<Shop*> shops, vector<Enemy*> enemies, vector<Role*> roles, 
 
     divide(1, 1, MAP_WIDTH - 2, MAP_HEIGHT - 2);
 
+    // add shops
     for (int i = 0; i < shops.size(); i++)
     {
         gMap[shops[i]->getX()][shops[i]->getY()] = shops[i]->getIcon();
     }
 
+    // add enemies
     for (int i = 0; i < enemies.size(); i++)
     {
         gMap[enemies[i]->getX()][enemies[i]->getY()] = enemies[i]->getIcon();
     }
+
+    // add random
+    for (int i = 0; i < randoms.size(); i++)
+    {
+        gMap[randoms[i]->getX()][randoms[i]->getY()] = randoms[i]->getIcon();
+    }
+
+    // for testing
+    gMap[6][3] = randoms[0]->getIcon();
+    gMap[2][5] = enemies[0]->getIcon();
 
 }
 
 void printInfo(Role& player)
 {
     // player info
-    cout << "\n|| ¡´ Player-1 ¡´ ||\n";
-    cout << "|| ¡´ Position: " << player.getPosition().x << ", " << player.getPosition().y << ")\n";
+    cout << "\n|| ¡´ Player\n";
+    cout << "|| ¡´ Position: (" << player.getPosition().x << ", " << player.getPosition().y << ")\n";
     cout << "|| ¡´ Vitality: ";
 
     WORD colorSettings = BACKGROUND_BLUE;
     SetConsoleTextAttribute(hConsole, colorSettings);
-    for (int i = 0; i < player.getVitality() / 100; i++)
+    for (int i = 0; i < player.getVitality() / 10; i++)
     {
         cout << ' ';
     }
     colorSettings = BACKGROUND_INTENSITY;
     colorSettings = FOREGROUND_INTENSITY;
     SetConsoleTextAttribute(hConsole, colorSettings);
+    for (int i = 0; i < 10 - player.getVitality() / 10; i++)
+    {
+        cout << ' ';
+    }
 
-    cout << ' ' << player.getVitality() << "/100\n";
-    cout << "|| ¡´ : Speed: " << player.getSpeed() << endl;
-    cout << "|| ¡´ : Avalible steps left: " << player.getAvalStep() << endl;
+    cout << " || " << player.getVitality() << "/100\n";
+    cout << "|| ¡´ Speed: " << player.getSpeed() << endl;
+    cout << "|| ¡´ Focus: " << player.getFocus() << endl;
+    cout << "|| ¡´ Avalible steps left: " << player.getAvalStep() << endl;
 
     cout << endl << endl;
 

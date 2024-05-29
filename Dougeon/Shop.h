@@ -1,58 +1,70 @@
+// Ensure this header is included only once in a single compilation
 #pragma once
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include "Position.h"
-#include "GameObj.h"
-#include "allConstants.h"
 
-using namespace std;
+#include <iostream>     // For standard I/O operations
+#include <string>       // For using std::string
+#include <vector>       // For using std::vector
+#include <map>          // For using std::map
+#include "Position.h"   // Include custom Position class header
+#include "allConstants.h" // Include all constants used in the program
 
+using namespace std;    // Use the standard namespace
+
+// Define the Shop class
 class Shop
 {
 protected:
-    Position pos;
-    char icon = SHOP;
+    Position pos;       // Position of the shop
+    char icon = SHOP;   // Icon representing the shop, initialized to SHOP constant
 public:
+    // Default constructor
     Shop() {};
+
+    // Constructor with position parameter
     Shop(Position p) : pos(p) {};
 
-    // setter
+    // Setter for position
     void setPos(Position p)
     {
-        this->pos = p;
+        this->pos = p; // Set the shop's position to the provided position
     }
+
+    // Setter for the x-coordinate of the shop's position
     void setX(int x) { this->pos.x = x; }
+
+    // Setter for the y-coordinate of the shop's position
     void setY(int y) { this->pos.y = y; }
 
-    // getter
+    // Getter for the x-coordinate of the shop's position
     int getX() { return this->pos.x; }
+
+    // Getter for the y-coordinate of the shop's position
     int getY() { return this->pos.y; }
+
+    // Getter for the shop's icon
     char getIcon() { return this->icon; }
 
-    vector<pair<string, int>> itemsName= { { "woodenSword", 10 },
-                               { "hammer", 15 },
-                               { "giantHammer", 20 },
-                               { "woodenShield", 12 },
-                               { "plateArmor", 25 },
-                               { "robe", 8 },
-                               { "holyGrail", 50 },
-                               { "shoes", 5 },
-                               { "godsbeard", 30 },
-                               { "teleportScroll", 1 } };
+    // List of items available in the shop with their names and respective quantities
+    vector<pair<string, int>> itemsName = {
+        { "woodenSword", 10 },
+        { "giantHammer", 20 },
+        { "RitualSword", 30 },
+        { "woodenShield", 12 },
+        { "PlateArmor", 20 },
+        { "robe", 8 },
+        { "holyGrail", 50 },
+        { "teleportScroll", 1 }
+    };
 
-    map<string, int> priceTag = { { "woodenSword", 10 },
-                               { "hammer", 15 },
-                               { "giantHammer", 20 },
-                               { "woodenShield", 12 },
-                               { "plateArmor", 25 },
-                               { "robe", 8 },
-                               { "holyGrail", 50 },
-                               { "shoes", 5 },
-                               { "godsbeard", 30 },
-                               { "teleportScroll", 1 } };
-
-    // gameObj method
-    void render() {};
+    // Map of items available in the shop with their names and respective prices
+    map<string, int> priceTag = {
+        { "woodenSword", 10 },
+        { "giantHammer", 20 },
+        { "RitualSword", 30 },
+        { "woodenShield", 12 },
+        { "PlateArmor", 20 },
+        { "robe", 8 },
+        { "holyGrail", 50 },
+        { "teleportScroll", 1 }
+    };
 };

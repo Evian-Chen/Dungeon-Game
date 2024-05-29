@@ -127,17 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Role.cpp" />
-    <ClCompile Include="Shop.cpp" />
+    <ClCompile Include="RandomEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="allConstants.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="Equipment.h" />
-    <ClInclude Include="GameObj.h" />
     <ClInclude Include="consoleManager.h" />
+    <ClInclude Include="HotSpring.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="RandomEvent.h" />
     <ClInclude Include="Role.h" />

@@ -46,6 +46,15 @@ public:
         return false;
     }
 
+    bool isOnRandom()
+    {
+        // Check whether it is an empty space
+        if (gMap[this->y][this->x] == EVENT)
+            return true;
+
+        return false;
+    }
+
     // Operator overloading
     Position operator+(const Position& rhs) const {
         return Position(x + rhs.x, y + rhs.y);

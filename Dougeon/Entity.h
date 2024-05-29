@@ -1,8 +1,7 @@
 #pragma once
 #include "Position.h"
-#include "GameObj.h"
 
-class Entity: public GameObj
+class Entity
 {
 protected:
 	Position position;
@@ -16,9 +15,6 @@ public:
 	Entity(Position pos) :position(pos.x, pos.y) {};
 	Entity(int startX, int startY) : position(startX, startY) {};
 
-	// gameObj method
-	void render() {};
-	
 	// update position
 	// virtual void update();
 };
