@@ -30,6 +30,9 @@ vector<Shop*> shops;
 // random event
 vector<RandomEvent*> randoms;
 
+// hot spring vector
+vector<HotSpring*> hotSprings;
+
 void startArt()
 {
     cout << "      ___           ___           ___                                  ___           ___     \n";
@@ -78,6 +81,15 @@ int main()
         shops.push_back(shop);
     }
 
+    // add 20 hot springs
+    for (int i = 0; i < 20; i++)
+    {
+        HotSpring* hotSpring = new HotSpring();
+        Position pos = randPosGenerator();
+        hotSpring->setPos(pos);
+        hotSprings.push_back(hotSpring);
+    }
+
     // add 20 enemies
     for (int i = 0; i < 20; i++)
     {
@@ -121,7 +133,7 @@ int main()
         gKeyState[i] = false;
     }
 
-    setUpMap(shops, enemies, roles, randoms);
+    setUpMap(shops, enemies, roles, randoms, hotSprings);
 
     printMap(player1);
 

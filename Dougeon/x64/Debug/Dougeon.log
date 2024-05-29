@@ -1,22 +1,2 @@
-﻿  Role.cpp
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(125,16): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(206,16): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(210,17): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(298,15): warning C4244: '*=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(317,17): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(700,19): warning C4244: '*=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(714,19): warning C4244: '*=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(750,36): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(755,36): warning C4244: '=': 將 'double' 轉換為 'int'，由於類型不同，可能導致資料遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(816,46): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(822,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(826,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(830,48): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(967,34): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(974,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(978,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(994,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(1014,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(1018,36): warning C4267: '引數': 將 'size_t' 轉換為 'int'，資料可能遺失
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\Role.cpp(1165,12): warning C4244: '引數': 將 'time_t' 轉換為 'unsigned int'，由於類型不同，可能導致資料遺失
+﻿  Enemy.cpp
   Dougeon.vcxproj -> C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\x64\Debug\Dougeon.exe

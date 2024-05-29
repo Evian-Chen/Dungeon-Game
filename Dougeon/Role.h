@@ -25,7 +25,7 @@ private:
 	// number of activated equipments
 	int actiEquip = 0;
 
-	int avalstep = 0;
+	int avalstep = 10;
 	int maxMovePoint = 0;
 	double diceAccRate = 0;
 
@@ -42,9 +42,9 @@ private:
 	map<string, bool> avalEquip = { 
 		{ "woodenSword", false },
 		{ "giantHammer", false },
-		{ "RitualSword", false },
+		{ "ritualSword", false },
 		{ "woodenShield", false },
-		{ "PlateArmor", false },
+		{ "plateArmor", false },
 		{ "robe", false },
 		{ "holyGrail", false },
 		{ "other", true } }; // other is for attack/flee (default)
@@ -136,10 +136,11 @@ public:
 	void attack(int, vector<Enemy*>&, int, int, int, HANDLE, WORD);
 	void provoke(int, vector<Enemy*>&, int, HANDLE, WORD);
 	void hammerSplash(vector<Enemy*>&, int, int);
-	void fortify();
+	// void fortify();
 	void shockBlast(vector<Enemy*>&, int, int, int, HANDLE, WORD);
 	void heal(int, HANDLE, WORD);
 	void speedUp(int, HANDLE, WORD);
+	bool flee();
 	
 	void woodenSword() { pAttack += 5;  hitRate += 10; }
 	void hammer(){ pAttack += 15; hitRate -= 15;}
@@ -157,13 +158,13 @@ public:
 	map<string, string> skillEquipMap = { 
 		{"attack","other"},
 		{"flee","other"},
-		{"provoke","WoodenShield"},
-		{"shockBlast","RitualSword"}, 
-		{"heal","HolyGrail"},
+		{"provoke","woodenShield"},
+		{"shockBlast","ritualSword"}, 
+		{"heal","holyGrail"},
 		{"speedUp", "woodenSword"} };
 	map<string, void (Role::*)()> equipFuncList = {
 		{ "woodenSword", &Role::woodenSword },
-		{ "RitualSword", &Role::ritualSword },
+		{ "ritualSword", &Role::ritualSword },
 		{ "giantHammer", &Role::giantHammer },
 		{ "woodenShield", &Role::woodenShield },
 		{ "PlateArmor", &Role::plateArmor },
@@ -192,7 +193,7 @@ public:
 	void showRollDice(int);
 	int getAvalStep() { return avalstep; }
 
-	void combat();
+	bool combat();
 	void showAllStatus(vector<Enemy*>&);
 	bool chooseSkill();
 	void chooseItem();

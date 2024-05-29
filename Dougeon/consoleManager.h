@@ -3,6 +3,7 @@
 #include "Position.h"
 #include "Role.h"
 #include "Shop.h"
+#include "hotSpring.h"
 #include "Enemy.h"
 #include "RandomEvent.h"
 #include <windows.h>
@@ -61,6 +62,12 @@ void printChr(char ch)
         break;
 
     case SHOP:
+        colorSettings |= BACKGROUND_RED;                    // light yellow background
+        colorSettings |= BACKGROUND_GREEN;
+        colorSettings |= BACKGROUND_INTENSITY;
+        break;
+
+    case HOTSPRING:
         colorSettings |= BACKGROUND_RED;                    // light yellow background
         colorSettings |= BACKGROUND_GREEN;
         colorSettings |= BACKGROUND_INTENSITY;
@@ -143,7 +150,7 @@ void initializeBoard() {
     }
 }
 
-void setUpMap(vector<Shop*> shops, vector<Enemy*> enemies, vector<Role*> roles, vector<RandomEvent*> randoms)
+void setUpMap(vector<Shop*> shops, vector<Enemy*> enemies, vector<Role*> roles, vector<RandomEvent*> randoms, vector<HotSpring*> hotSprings)
 {
     srand(1283568); // for devide (making maze)
     // initializeBoard();
@@ -176,6 +183,11 @@ void setUpMap(vector<Shop*> shops, vector<Enemy*> enemies, vector<Role*> roles, 
     for (int i = 0; i < randoms.size(); i++)
     {
         gMap[randoms[i]->getX()][randoms[i]->getY()] = randoms[i]->getIcon();
+    }
+
+    for (int i = 0; i < hotSprings.size(); i++)
+    {
+        gMap[hotSprings[i]->getX()][hotSprings[i]->getY()] = hotSprings[i]->getIcon();
     }
 
     // for testing

@@ -37,6 +37,15 @@ public:
         return false;
     }
 
+    bool isOnHotSpring()
+    {
+        // Check whether it is an empty space
+        if (gMap[this->y][this->x] == HOTSPRING)
+            return true;
+
+        return false;
+    }
+
     bool isOnShop()
     {
         // Check whether it is an empty space

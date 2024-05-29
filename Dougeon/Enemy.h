@@ -11,9 +11,9 @@ public:
 
 	Enemy() : Entity()
 	{
-		vitality = 100;
-		speed = 5;
-		hitRate = 70;
+		vitality = 1;
+		speed = 10;
+		hitRate = 98;
 		pAttack = 10;
 		mAttack = 10;
 		pDefense = 10;
@@ -25,9 +25,9 @@ public:
 
 	Enemy(Position pos) : Entity(pos)
 	{
-		vitality = 100;
-		speed = 5;
-		hitRate = 70;
+		vitality = 1;
+		speed = 10;
+		hitRate = 98;
 		pAttack = 10;
 		mAttack = 10;
 		pDefense = 10;
@@ -66,10 +66,10 @@ public:
 
 	// combat fun&variables
 	int angryDebuff = 0;
-	int attack();
-	bool provoke();
-	int shockBlast();
-	int heal();
+	int attack(int);
+	bool provoke(int);
+	int shockBlast(int);
+	int heal(int);
 	// int speedUp();
 
 	void showStatus();

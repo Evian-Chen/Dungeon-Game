@@ -48,9 +48,9 @@ public:
     vector<pair<string, int>> itemsName = {
         { "woodenSword", 10 },
         { "giantHammer", 20 },
-        { "RitualSword", 30 },
+        { "ritualSword", 30 },
         { "woodenShield", 12 },
-        { "PlateArmor", 20 },
+        { "plateArmor", 20 },
         { "robe", 8 },
         { "holyGrail", 50 },
         { "teleportScroll", 1 }
@@ -60,9 +60,9 @@ public:
     map<string, int> priceTag = {
         { "woodenSword", 10 },
         { "giantHammer", 20 },
-        { "RitualSword", 30 },
+        { "ritualSword", 30 },
         { "woodenShield", 12 },
-        { "PlateArmor", 20 },
+        { "plateArmor", 20 },
         { "robe", 8 },
         { "holyGrail", 50 },
         { "teleportScroll", 1 }
