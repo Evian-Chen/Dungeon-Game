@@ -64,6 +64,15 @@ public:
         return false;
     }
 
+    bool isOnFinal()
+    {
+        // Check whether it is an empty space
+        if (gMap[this->y][this->x] == FINAL)
+            return true;
+
+        return false;
+    }
+
     // Operator overloading
     Position operator+(const Position& rhs) const {
         return Position(x + rhs.x, y + rhs.y);

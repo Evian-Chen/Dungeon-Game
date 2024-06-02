@@ -138,6 +138,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="consoleManager.h" />
     <ClInclude Include="HotSpring.h" />
+    <ClInclude Include="mapElement.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="RandomEvent.h" />
     <ClInclude Include="Role.h" />

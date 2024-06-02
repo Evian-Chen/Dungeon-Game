@@ -25,7 +25,7 @@ private:
 	// number of activated equipments
 	int actiEquip = 0;
 
-	int avalstep = 10;
+	int avalstep = 100;
 	int maxMovePoint = 0;
 	double diceAccRate = 0;
 
@@ -58,7 +58,7 @@ public:
 	// item
 	static int godsBeard;
 	static int goldenRoot;
-	static int teleportScroll;
+	// static int teleportScroll;
 
 	// during combat
 	int round = 0;
@@ -90,7 +90,7 @@ public:
 		eicon = PLAYER_ICON;
 		vitality = 100;
 		focus = 100;
-		speed = rand() % 26 + 30;
+		speed = 75;
 		hitRate = rand() % 21 + 40;
 		pAttack = rand() % 11 + 5;
 		mAttack = rand() % 11 + 5;
@@ -107,19 +107,17 @@ public:
 	// get role's position
 	Position getPosition() { return position; }
 
-	// gameObj method
-	void render() {};
-
 	// Setter
 	void setHasProvoke() { hasProvoke = true; }
 	void setHasShockBlast() { hasShockBlast = true; }
 	void setHasHeal() { hasHeal = true; }
 	void setHasSpeedUp() { hasSpeedUp = true; }
-	void setInBattle() { inBattle = true; }
+	void setInBattle(bool var) { inBattle = var; }
 	void setVitality(int value) { vitality = value; }
 	void setFocus(int value) { focus = value; }
 	void setHitRate(int value) { hitRate = value; }
 	void setSpeed(int value) { speed = value; }
+	void setDead(bool var) { isDead = var; }
 
 	// Getter
 	int getVitality() const { return vitality; }
@@ -131,6 +129,7 @@ public:
 	int getPDefense() const { return pDefense; }
 	int getMDefense() const { return mDefense; }
 	bool getInBattle()const { return inBattle; }
+	bool getIsDead() { return this->isDead; }
 
 	
 	void attack(int, vector<Enemy*>&, int, int, int, HANDLE, WORD);
@@ -150,7 +149,6 @@ public:
 	void holyGrail(){ mDefense += 30; }
 	void ritualSword() { mAttack += 15; }
 	void plateArmor() { pDefense += 2; speed -= 10; }
-	// void teleportScroll(){ int a; }
 
 	// variable for combat
 	int numSkill = 0;
@@ -177,11 +175,12 @@ public:
 	int angryDebuff = 0;
 
 	// move role
-	void move(const Position& delta);
+	bool move(const Position& delta);
 	
 	void showBag();
 	void chooseEquip();
 	void showChoosen(int, int);
+	void teleportScroll();
 
 	void showStatus();
 

@@ -6,14 +6,11 @@ using namespace std;
 
 void Enemy::showStatus()
 {
-	cout << "|| ¡´ Vitality: " << setw(10) << vitality << '\n'
-		<< "|| ¡´ speed: " << setw(13) << speed << '\n'
-		<< "|| ¡´ hitRate: " << setw(11) << hitRate << '\n'
-		<< "|| ¡´ physical Attack: " << setw(3) << pAttack << '\n'
-		<< "|| ¡´ magic Attack: " << setw(6) << mAttack << '\n'
-		<< "|| ¡´ physical Defense: " << setw(2) << pDefense << '\n'
-		<< "|| ¡´ magic Defense: " << setw(5) << mDefense << '\n'
-		<< "|| ¡´ angry debuff: " << setw(5) << angryDebuff << '\n';
+	cout << "|| ¡´ Vitality: " << setw(10) << this->vitality << '\n'
+		<< "|| ¡´ magic Attack: " << setw(6) << this->mAttack << '\n'
+		<< "|| ¡´ physical Defense: " << setw(2) << this->pDefense << '\n'
+		<< "|| ¡´ magic Defense: " << setw(5) << this->mDefense << '\n'
+		<< "|| ¡´ angry debuff: " << setw(5) << this->angryDebuff << '\n';
 }
 
 int Enemy::attack(int hitrate)

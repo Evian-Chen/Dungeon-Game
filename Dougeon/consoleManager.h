@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "allConstants.h"
+#include "mapElement.h"
 
 char gMap[MAP_HEIGHT][MAP_WIDTH];
 bool openBag = false, showStatus = false;
@@ -36,6 +37,18 @@ enum ValidInput
     INVALID,
 };
 
+// Function to display the "Game Over" message with animation
+void youLoseAnimation() {
+    // Game Over frames
+    cout << "   _____                         ____                 \n"
+        "  / ____|                       / __ \\                \n"
+        " | |  __  __ _ _ __ ___   ___  | |  | |_   _____ _ __ \n"
+        " | | |_ |/ _` | '_ ` _ \\ / _ \\ | |  | \\ \\ / / _ \\ '__|\n"
+        " | |__| | (_| | | | | | |  __/ | |__| |\\ V /  __/ |   \n"
+        "  \\_____|\\__,_|_| |_| |_|\\___|  \\____/  \\_/ \\___|_|   \n";
+
+}
+
 Position randPosGenerator()
 {
     int x = rand() % MAP_HEIGHT;
@@ -44,7 +57,6 @@ Position randPosGenerator()
     {
         x = rand() % MAP_HEIGHT;
         y = rand() % MAP_WIDTH;
-        cout << x << ' ' << y;
     }
     Position pos(x, y);
     return pos;
@@ -150,10 +162,12 @@ void initializeBoard() {
     }
 }
 
-void setUpMap(vector<Shop*> shops, vector<Enemy*> enemies, vector<Role*> roles, vector<RandomEvent*> randoms, vector<HotSpring*> hotSprings)
+void setUpMap()
 {
     srand(1283568); // for devide (making maze)
-    // initializeBoard();
+    
+
+    Position finalPos = randPosGenerator();
 
     // Add the border walls
     for (int x = 0; x < MAP_WIDTH; ++x) {
@@ -190,8 +204,10 @@ void setUpMap(vector<Shop*> shops, vector<Enemy*> enemies, vector<Role*> roles, 
         gMap[hotSprings[i]->getX()][hotSprings[i]->getY()] = hotSprings[i]->getIcon();
     }
 
+    gMap[finalPos.x][finalPos.y] = FINAL;
+
     // for testing
-    gMap[6][3] = randoms[0]->getIcon();
+    gMap[6][3] = FINAL;
     gMap[2][5] = enemies[0]->getIcon();
 
 }
@@ -269,8 +285,6 @@ void printMap(Role& player) {
         cout << '=';
     }
 
-    
-
     cout << "\n\n";
     printInfo(player);
 }
@@ -312,7 +326,7 @@ void keyUpdate(bool key[])
 /*
 // 這邊之後應該要改成用render，用陣列管理每個腳色，直接用for loop update
 */
-void update(bool key[], Role& player)
+bool update(bool key[], Role& player)
 {
     // 清除版面
     system("CLS");
@@ -368,8 +382,8 @@ void update(bool key[], Role& player)
 
     // do something according to the input
     if (hasInput) {
-        player.move(delta);
-        printMap(player);
+        if (!player.move(delta)) { return true; } // exit game (win)
+        else { printMap(player); }
     }
     else if (openBag) {
         player.showBag();
@@ -379,4 +393,12 @@ void update(bool key[], Role& player)
     else if (showStatus) {
         player.showStatus();
     }
+
+    if (player.getIsDead()) { // exit game (lose)
+        system("cls");
+        youLoseAnimation();
+        return true;
+    }
+
+    return false;
 }

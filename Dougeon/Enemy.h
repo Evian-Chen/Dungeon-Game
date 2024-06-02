@@ -37,9 +37,6 @@ public:
 		eicon = ENEMY;
 	}
 
-	// gameObj method
-	void render() {};
-
 	// Getter methods
 	int getVitality() const { return vitality; }
 	int getSpeed() const { return speed; }
@@ -53,16 +50,19 @@ public:
 	int getX() { return this->position.x; }
 	int getY() { return this->position.y; }
 	char getIcon() { return this->eicon; }
+	bool getInBattle() { return this->inBattle; }
+	Position getPos() { return this->position; }
 
 	// Setter methods
-	void setVitality(int value) { vitality = value; }
-	void setDead(bool value) { isDead = value; }
+	void setVitality(int value) { this->vitality = value; }
+	void setDead(bool value) { this->isDead = value; }
 	void setPos(Position p)
 	{
 		this->position = p;
 	}
 	void setX(int x) { this->position.x = x; }
 	void setY(int y) { this->position.y = y; }
+	void setInBattle(bool var) { this->inBattle = var; }
 
 	// combat fun&variables
 	int angryDebuff = 0;

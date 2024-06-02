@@ -44,6 +44,8 @@ public:
     // Getter for the shop's icon
     char getIcon() { return this->icon; }
 
+    Position getPos() { return this->pos; }
+
     // List of items available in the shop with their names and respective quantities
     vector<pair<string, int>> itemsName = {
         { "woodenSword", 10 },

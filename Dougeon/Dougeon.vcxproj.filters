@@ -59,5 +59,8 @@
     <ClInclude Include="HotSpring.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="mapElement.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

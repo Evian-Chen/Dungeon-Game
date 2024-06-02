@@ -52,8 +52,13 @@ int subtitleAnimation()
 		"Press 1 to get magic card, press 2 otherwise: ";	
 	runSubtitle(sub2);
 
-	char input = _getch() - '0';
-	return input;
+	char input = _getch();
+	while (input != '1' && input != '2') {
+		cout << input << endl;
+		cout << "Invalid input, enter again: ";
+		input = _getch();
+	}
+	return input - '0';
 }
 
 void generatingAnime()
