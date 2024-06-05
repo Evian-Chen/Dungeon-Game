@@ -1,6 +1,6 @@
 # Maze Adventure Game
 
-This program is a practice of object-oriented programming.
+This program is a practice of object-oriented programming and also the final project of NTUST OOP lab 2024 spring.
 This is a maze adventure game. The goal of the game is to find the exit and help the protagonist escape from the maze. There are four types of interactive objects in the maze: enemies, shops, hot springs, and random events.
 
 ## Features
