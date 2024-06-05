@@ -1,4 +1,0 @@
-﻿  main.cpp
-  LINK : 最後的累加連結找不到或未建置 C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\x64\Debug\Dougeon.exe，正在執行完整連結
-MapManager.obj : error LNK2005: "char * * mainMap" (?mainMap@@3PEAPEADEA) 已在 main.obj 中定義過了
-C:\Users\mekak\OneDrive\桌面\Dougeon\Dougeon\x64\Debug\Dougeon.exe : fatal error LNK1169: 找到有一或多個已定義的符號
